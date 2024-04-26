@@ -1,21 +1,28 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include "funciones.h"
 
 
 int empaquetar(Protocolo & proto)
 {
-    proto.Frames[0] = proto.CMD & 0x01 | proto.LNG & 0x07 << 1; // guardar CMD y LNG
+    //Protocolo
+    // CMD 7 bits / LNG 6 bits / DATA 63 bytes / FCS 10 bits
+
+    proto.Frames[0] = proto.CMD & 0x7F | proto.LNG & 0x01 << 7; // guardar CMD(7) y LNG(1), no sobra nada
+    proto.Frames[1] = (proto.LNG >> 1) & 0x1F; // guarda los siguientes 5 bits, faltan 3
     if(proto.LNG > 0) // si quedan datos por enviar, se encapsulan
     {                       // 4 bits
-        proto.Frames[0] |= proto.DATA[0] & 0x0F << 4; // llena los 4 espacios que le queda a frames[0]
+        proto.Frames[1] |= (proto.DATA[0] & 0x07) << 5; // llena los 3 espacios que le queda a frames[1], no falta nada que llenar
         for(size_t i = 0; i < proto.LNG; i++)
         {                   // MSB del dato anterior + LSB del dato nuevo.
-            proto.Frames[i + 1] = proto.DATA[i] >> 4 | (proto.DATA[i + 1] & 0x0F) << 4;
+            proto.Frames[i + 2] = proto.DATA[i] >> 3 | (proto.DATA[i] & 0x07) << 5;
         }
-        proto.Frames[proto.LNG] = proto.DATA[proto.LNG - 1] >> 4; // guarda el último dato de data en frames
+        proto.Frames[proto.LNG] = proto.DATA[proto.LNG - 1] >> 3; // guarda el último dato de data en frames
     }
     proto.FCS = fcs(proto.Frames, proto.LNG + 1);
-    proto.Frames[proto.LNG] = (proto.FCS & 0x0F) << 4; //calcula y guarda fsc de Frames en frames
-    proto.Frames[proto.LNG] = (proto.FCS << 4) & 0x03;
+
+    proto.Frames[proto.LNG] |= (proto.FCS & 0x07) << 5; //calcula y guarda fsc de Frames en frames
+    proto.Frames[proto.LNG + 1] = proto.FCS & 0x1F;
     return proto.LNG + 2;
 }
 
@@ -43,9 +50,12 @@ bool desempaquetar(Protocolo & proto, int size)
         return false;
     }
     
-    if(proto.LNG > 0 && (proto.LNG <= LARGO_DATA)) 
-    {
-        proto.DATA[i] = (proto.Frames [i] >> 4) & 0x0F | (proto.Frames[i + 1] << 4);
+    if (proto.LNG > 0 && (proto.LNG <= LARGO_DATA))
+    {                       // 4 bits
+        for (int i = 0; i < proto.LNG; i++)
+        {                       
+            proto.DATA[i] = (proto.Frames[i] >> 4) & 0x0F | (proto.Frames[i+1] & 0x0F << 4);
+        }                           // 4 bits guardados en parte menos significativa
     }
     int _fcs = fcs(proto.Frames, proto.LNG);
     BYTE arr_aux[1] = {proto.Frames[proto.LNG] & 0x0F};
