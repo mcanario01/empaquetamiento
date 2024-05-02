@@ -2,23 +2,22 @@
 #include <wiringPi.h>
 #include "funciones.h"
 #include <stdlib.h>
+
 #define SPEED 100000
 
 int main(){
     int opcion=0; //variable para seleccionar una opcion del menú
     int contmensajes=0; //variable para contar los mensajes enviados
-    BYTE CMD = 7;
-    BYTE LNG = 6;
-    BYTE DATA[] = "hola mundo";
-    protocolo.CMD = 7;
-    protocolo.LNG = 6;
 
     memcpy(protocolo.DATA, DATA sizeof(DATA));
-    if (wiringPiSetupGpio () == -1){
+    if (wiringPiSetupGpio () == -1)
+    {
         printf("Error");
         return 0;
     }
-    pinMode(17,OUTPUT);
+
+    pinMode(17,OUTPUT); //pin receptor
+
     while(opcion !=6){
         printf("-----------------------------------------------\n");
         printf("mensajes enviados:%d\n", contmensajes);
