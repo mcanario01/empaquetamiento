@@ -74,10 +74,16 @@ void Cerrar(int comando){
     exit(0);
 }
 
-void EnviarMensaje(){
-    char mensaje[];
+void EnviarMensaje(Protocolo proto){
     printf("Ingrese su mensaje\n");
-    scanf("%s",mensaje);
+    scanf("%62s",proto.DATA);
     digitalWrite(17,mensaje);
+    proto.LNG=strlen((const char*)proto.DATA);
+    empaquetar(proto);
+    memcpy(proto.trama,proto.trama,proto.LNG+2);
+    bool estado=desempaquetar(proto,proto.LNG+2);
+    printf("Se recibio un mensaje con estado %s\n",estado?"Correcto":"Incorrecto");
+    printf("El largo del mensaje es $d\n",proto.LNG);
+    printf("El mensajes es %s\n",proto.DATA);
 
 }
