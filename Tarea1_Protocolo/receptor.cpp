@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include <wiringPi.h>
+//#include <wiringPi.h>
 #define SPEED 100000
 
 int main(){
 
-if (wiringPiSetupGpio () == -1){
+/*if (wiringPiSetupGpio () == -1){
 printf("Error");
 return 0;
 }
@@ -13,6 +13,6 @@ while(true){
 
 bool level=digitalRead(18);
 
-}
+}*/
 return 0;
 }
