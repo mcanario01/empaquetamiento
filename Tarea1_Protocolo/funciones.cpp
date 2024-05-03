@@ -9,8 +9,9 @@ int empaquetar(Protocolo & proto)
     //Protocolo
     // CMD 7 bits / LNG 6 bits / DATA 63 bytes / FCS 10 bits
 
-    proto.Frames[0] = proto.CMD & 0x7F | proto.LNG & 0x01 << 7; // guardar CMD(7) y LNG(1), no sobra nada
+    proto.Frames[0] = proto.CMD & 0x7F | (proto.LNG & 0x01) << 7; // guardar CMD(7) y LNG(1), no sobra nada
     proto.Frames[1] = (proto.LNG >> 1) & 0x1F; // guarda los siguientes 5 bits, faltan 3
+    printf("aten%d,largo %d\n",(proto.Frames[0] >> 7) & 0x01 | (proto.Frames[1] & 0x1F),proto.LNG);
     if(proto.LNG > 0) // si quedan datos por enviar, se encapsulan
     {
         for(size_t i = 0; i < proto.LNG; i++)
@@ -70,12 +71,14 @@ bool desempaquetar(Protocolo & proto, int size)
 void EnviarMensaje(Protocolo & proto){
     printf("Ingrese su mensaje:\n");
     scanf("%62s",proto.DATA); //guarda un mensaje ingresado
+    proto.LNG= strlen((const char *)proto.DATA);
     proto.LNG = empaquetar(proto);
-    memcpy(proto.Frames, proto.Frames, proto.LNG + 4);
+    memcpy(proto.Frames,proto.Frames,proto.LNG+4);
 }
 
 
-void recibirMensaje(Protocolo &proto)
+
+void recibirMensaje(Protocolo proto)
 {
     bool estado = desempaquetar(proto, proto.LNG); //ejecuta desempaquetar en el proto dado
     printf("Se recibio un mensaje con estado %s\n",estado?"Correcto":"Incorrecto"); //imprime por pantalla si el mensaje es correcto
