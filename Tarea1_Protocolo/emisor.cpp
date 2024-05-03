@@ -9,6 +9,9 @@ int main(){
     int opcion=0; //variable para seleccionar una opcion del menú
     int contmensajes=0; //variable para contar los mensajes enviados
     Protocolo proto;
+    proto.CMD=7;
+    proto.LNG=6;
+
 
    /* memcpy(protocolo.DATA, DATA sizeof(DATA));
     if (wiringPiSetupGpio () == -1)
