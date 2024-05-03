@@ -16,9 +16,9 @@ int fcs(BYTE * arr, int size);
 void Cerrar(bool comando);
 
 //envia un mansaje
-void EnviarMensaje();
+void EnviarMensaje(Protocolo & proto);
 
 //recibe un mensaje e imprime por pantalla sus datos.
-void recibirMensaje(Protocolo proto);
+void recibirMensaje(Protocolo & proto);
 
 #endif
