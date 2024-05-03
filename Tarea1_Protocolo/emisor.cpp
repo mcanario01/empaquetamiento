@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <wiringPi.h>
+//#include <wiringPi.h>
 #include "funciones.h"
 #include <stdlib.h>
 
@@ -8,25 +8,28 @@
 int main(){
     int opcion=0; //variable para seleccionar una opcion del menú
     int contmensajes=0; //variable para contar los mensajes enviados
+    Protocolo proto;
 
-    memcpy(protocolo.DATA, DATA sizeof(DATA));
+   /* memcpy(protocolo.DATA, DATA sizeof(DATA));
     if (wiringPiSetupGpio () == -1)
     {
         printf("Error");
         return 0;
     }
 
-    pinMode(17,OUTPUT); //pin receptor
+    pinMode(17,OUTPUT); //pin receptor */
 
     while(opcion !=6){
         printf("-----------------------------------------------\n");
         printf("mensajes enviados:%d\n", contmensajes);
         printf("-----------------------------------------------\n");
         printf("MENU PRINCIPAL\n");
-        printf("Seleccione una opcion\n[1]Enviar mensaje de texto\n[2]Enviar mensaje de prueba\n[3]Mostrar contenido\n[4]Contador de mensajes\n[5]Cerrar el emisor\n[6]");
+        printf("Seleccione una opcion\n[1]Enviar mensaje de texto\n[2]Enviar mensaje de prueba\n[3]Mostrar contenido\n[4]Contador de mensajes\n[5]Cerrar el emisor\n[6]Salir del programa\n");
         scanf("%d",&opcion);
         switch(opcion){
             case 1:
+                EnviarMensaje(proto);
+                recibirMensaje(proto);
                 //Enviar mensaje de texto y ser guardado en un archivo mensajes.txt
                 break;
             case 2:
