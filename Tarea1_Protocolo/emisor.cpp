@@ -13,7 +13,7 @@ int main(){
     proto.LNG=6;
 
 
-   /* memcpy(protocolo.DATA, DATA sizeof(DATA));
+    /* memcpy(protocolo.DATA, DATA sizeof(DATA));
     if (wiringPiSetupGpio () == -1)
     {
         printf("Error");
@@ -29,6 +29,7 @@ int main(){
         printf("MENU PRINCIPAL\n");
         printf("Seleccione una opcion\n[1]Enviar mensaje de texto\n[2]Enviar mensaje de prueba\n[3]Mostrar contenido\n[4]Contador de mensajes\n[5]Cerrar el emisor\n[6]Salir del programa\n");
         scanf("%d",&opcion);
+        getchar();
         switch(opcion){
             case 1:
                 EnviarMensaje(proto);

@@ -19,6 +19,6 @@ void Cerrar(bool comando);
 void EnviarMensaje(Protocolo & proto);
 
 //recibe un mensaje e imprime por pantalla sus datos.
-void recibirMensaje(Protocolo & proto);
+void recibirMensaje(Protocolo proto);
 
 #endif
