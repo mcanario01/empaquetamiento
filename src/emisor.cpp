@@ -1,8 +1,19 @@
 #include <stdio.h>
-//#include <wiringPi.h>
 #include "funciones.h"
 #include <stdlib.h>
 #include <string.h>
+#ifdef RASPBERRY_PI
+#include <wiringPi.h>
+#endif
+#ifndef RASPBERRY_PI
+#define wiringPiSetupGpio() 0
+#define pinMode(a,b)
+#define digitalWrite(a,b)
+#define delayMicroseconds(a)
+#define delay(a)
+#define HIGH 1
+#define LOW 0
+#endif
 
 #define SPEED 100000
 
@@ -25,9 +36,8 @@ int main(int argc, char *argv[]){
     proto.LNG=6;
 
 
-    if(argv[1] == "Linux"){
-        #include <wiringPi.h>
-        if (wiringPiSetupGpio () == -1)
+    if(strcmp(argv[1], "Linux") == 0){
+        if (wiringPiSetupGpio() == -1)
         {
             printf("Error");
             return 0;
