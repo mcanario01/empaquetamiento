@@ -11,6 +11,9 @@ all:
 	g++ emisor.o funciones.o -o emisor
 	g++ -c receptor.cpp -o receptor.o
 	g++ receptor.o funciones.o -o receptor
+	g++ envia_bytes.cpp -o envia_bytes
+	g++ recibe_bytes.cpp -o recibe_bytes
+	g++ delay.cpp -o delay
 	del *.o
 	
 run-emisor:
@@ -32,6 +35,9 @@ all:
 	g++ emisor.o funciones.o -o emisor -lwiringPi
 	g++ -c receptor.cpp -o receptor.o -lwiringPi
 	g++ receptor.o funciones.o -o receptor -lwiringPi
+	g++ envia_bytes.cpp -o envia_bytes -lwiringPi
+	g++ recibe_bytes.cpp -o recibe_bytes -lwiringPi
+	g++ delay.cpp -o delay -lwiringPi
 	rm *.o
 
 run-emisor:
