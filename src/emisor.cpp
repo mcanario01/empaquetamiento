@@ -17,9 +17,9 @@
 
 #define SPEED 100000
 
-int main(int argc, char *argv[]){
+int main(){
     
-
+    /*
     if(argc != 2){
         printf("Error, debe ingresar un argumento\n");
         return 0;
@@ -28,22 +28,23 @@ int main(int argc, char *argv[]){
         printf("El sistema operativo ingresado no tiene soporte.\n");
     return 0;
     }
+    */
 
     int opcion=0; //variable para seleccionar una opcion del menú
     int contmensajes=0; //variable para contar los mensajes enviados
-    Protocolo proto;
-    proto.CMD=7;
-    proto.LNG=6;
+    Protocolo proto; //estructura para enviar mensajes
+    proto.CMD=7; //comando de envio de mensaje
+    proto.LNG=6; //longitud del mensaje
 
 
-    if(strcmp(argv[1], "Linux") == 0){
-        if (wiringPiSetupGpio() == -1)
-        {
-            printf("Error");
-            return 0;
-        }
-        pinMode(17,OUTPUT); //pin receptor */
+
+    if (wiringPiSetupGpio() == -1)
+    {
+        printf("Error");
+        return 0;
     }
+    pinMode(17,OUTPUT); //pin receptor */
+
 
 
     while(opcion !=6){
