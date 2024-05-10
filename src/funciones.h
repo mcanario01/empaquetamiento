@@ -3,22 +3,21 @@
 
 #include "protocolo.h"
 
-//retorna LNG + 2.
-int empaquetar(Protocolo & proto);
+// Guarda todos los campos CMD y DATA en el arreglo de bytes Frames
+// Calcula el largo del mensaje y lo guarda en Frames.
+// Calcula el chksum y lo guarda en el arreglo de bytes FCS.
+void empaquetar(Protocolo &proto);
 
-//Retorna verdadero si la paridad es correcta, falso si la paridad no es correcta. 
-bool desempaquetar(Protocolo & proto, int size);
+// Retorna verdadero si la paridad es correcta, falso si la paridad no es correcta.
+bool desempaquetar(Protocolo &proto);
 
-//retorna la cadena de chksum.
-int fcs(BYTE * arr, int size);
+// retorna la cadena de chksum.
+unsigned int fcs(BYTE *arr, int size);
 
-//cierra el programa.
-void Cerrar(bool comando);
+// Guarda CMD y LNG en la estructura proto.
+void obtenerInformacion(Protocolo &proto);
 
-//envia un mansaje
-void EnviarMensaje(Protocolo & proto);
-
-//recibe un mensaje e imprime por pantalla sus datos.
-void recibirMensaje(Protocolo proto);
+// recibe un mensaje e imprime por pantalla sus datos.
+bool leerMensaje(Protocolo proto);
 
 #endif

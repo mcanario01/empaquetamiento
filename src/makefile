@@ -30,15 +30,12 @@ endif
 
 ifeq ($(uname_S), Linux)
 all:
-	g++ -c funciones.cpp -o funciones.o -lwiringPi
-	g++ -c emisor.cpp -o emisor.o -lwiringPi
-	g++ emisor.o funciones.o -o emisor -lwiringPi
-	g++ -c receptor.cpp -o receptor.o -lwiringPi
-	g++ receptor.o funciones.o -o receptor -lwiringPi
-	g++ envia_bytes.cpp -o envia_bytes -lwiringPi
-	g++ recibe_bytes.cpp -o recibe_bytes -lwiringPi
-	g++ delay.cpp -o delay -lwiringPi
-	rm *.o
+	g++ -c funciones.cpp -lwiringPi
+	g++ -c envia_bytes.cpp -lwiringPi
+	g++ -c recibe_bytes.cpp -lwiringPi
+	g++ -o emisor envia_bytes.o funciones.o -lwiringPi
+	g++ -o receptor recibe_bytes.o funciones.o -lwiringPi
+	g++ -o delay delay.cpp -lwiringPi
 
 run-emisor:
 	sudo ./emisor

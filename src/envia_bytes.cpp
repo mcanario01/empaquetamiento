@@ -25,8 +25,6 @@ volatile int numero_bytes_transmitidos = 0;						  // guarda el número de bytes
 
 Protocolo mensaje;
 
-BYTE cadena[cantidad_de_bytes] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; // guarda los bytes a transmitir
-
 int numero_de_unos = 0;							  // es el número de unos en el byte
 bool transmisionIniciada = false;				  // indica si la transmisión está activa
 
@@ -45,14 +43,9 @@ int main()
 	// CONFIGURA PINES DE ENTRADA SALIDA
 	pinMode(TX_PIN, OUTPUT);
 
-	memcpy(mensaje.DATA, "HOLA MUNDO!", sizeof(mensaje.DATA)); // copia el mensaje en el buffer
-	mensaje.CMD = 0x01;											// asigna el comando
-	mensaje.LNG = sizeof(mensaje.DATA);							// asigna la longitud del mensaje
+	obtenerInformacion(mensaje); // obtiene la información del usuario
+	empaquetar(mensaje);			// empaqueta el mensaje
 
-	mensaje.FCS = empaquetar(mensaje); // empaqueta el mensaje
-
-	//  printf("Delay\n");
-	//  delay(5000);
 	iniciarTransmision();		// inicia la transmisión
 	while (transmisionIniciada) // mientras la transmisión esté activa
 		delay(2000);			// espera 2 segundos para que termine la transmisión
@@ -65,23 +58,22 @@ void cb(void)
 	if (transmisionIniciada)
 	{ // si la transmisión está activa
 		// Escribe en el pin TX
-		if (numero_bits_transmitidos == 0)
+		if (numero_bits_transmitidos != 0)
 		{							 // si el numero de bits es 0
-			digitalWrite(TX_PIN, 0); // Bit de inicio
+			digitalWrite(TX_PIN, (mensaje.Frames[numero_bytes_transmitidos] >> (numero_bits_transmitidos - 1)) & 0x01);
 		}
-		else if (numero_bits_transmitidos <= CANTIDAD_DE_BYTES - 1)
-		{
-			digitalWrite(TX_PIN, (mensaje.Frames[numero_bytes_transmitidos] >> (numero_bits_transmitidos - 1)) & 0x01); // Bit de dato
-																		 // printf("%d",(cadena[numero_bytes_transmitidos]>>(numero_bits_transmitidos-1))&0x01);
+		else
+		{ // Bit de dato
+			digitalWrite(TX_PIN, 0); // Si el numero de bits es 0, el bit de dato es 0
 		}
 
 		// Actualiza contador de bits
 		numero_bits_transmitidos++;
 
 		// Actualiza contador de bytes
-		if (numero_bits_transmitidos == 8)
+		if (numero_bits_transmitidos == 9)
 		{
-			numero_bits_transmitidos = 0;
+			numero_bits_transmitidos = 1;
 			numero_bytes_transmitidos++;
 
 			// Finaliza la comunicación
@@ -89,6 +81,7 @@ void cb(void)
 			{
 				transmisionIniciada = false;
 				numero_bytes_transmitidos = 0;
+				numero_bits_transmitidos = 0;
 			}
 		}
 	}
