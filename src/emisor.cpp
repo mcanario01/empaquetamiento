@@ -17,8 +17,6 @@
 #define LOW 0
 #endif
 
-#define SPEED 100000
-
 // MACROS
 #define DELAY_PIN 0
 #define TX_PIN 2
@@ -32,12 +30,14 @@
 // DECLARACION DE PROTOTIPOS
 void cb(void);			   // función de interrupción
 void iniciarTransmision(); // función para iniciar la transmisión
+void limpiarMensaje(Protocolo &mensaje); // función para limpiar el mensaje
 
 // VARIABLES GLOBALES
 volatile int numero_bits_transmitidos = 0;	// guarda el número de bits transmitidos
 volatile int numero_bytes_transmitidos = 0; // guarda el número de bytes transmitidos
 
-Protocolo mensaje;
+
+Protocolo mensaje;													 // Se crea un mensaje de prueba
 
 int numero_de_unos = 0;			  // es el número de unos en el byte
 bool transmisionIniciada = false; // indica si la transmisión está activa
@@ -56,6 +56,7 @@ int main()
 		printf("Unable to start interrupt function\n"); // si hay error al configurar la interrupción, imprime mensaje
 	}
 
+
 	// CONFIGURA PINES DE ENTRADA SALIDA
 	pinMode(TX_PIN, OUTPUT);
 
@@ -69,7 +70,8 @@ int main()
 	{
 	case 1:
 	{
-		Protocolo mensaje;													 // Se crea un mensaje de prueba
+
+		limpiarMensaje(mensaje); // Se limpia el mensaje
 		mensaje.CMD = opcion;
 		obtenerInformacion(mensaje);										 // Se solicita al usuario el mensaje a enviar
 		empaquetar(mensaje);												 // Se empaqueta el mensaje
@@ -104,15 +106,15 @@ int main()
 	case 3:
 		// Se debe enviar un mensaje con el nombre de un archivo de texto de prueba en el receptor, con dicho comando, el receptor debe mostrar el contenido del archivo
 		// consola en caso de que este exista, en caso contrario el receptor debe mostrar por consola que el archivo no existe.
-		mensaje.CMD = opcion;
+		//mensaje.CMD = opcion;
 		break;
 	case 4:
 		// El receptor debe imprimir los mensajes recibidos correctamente y con error (no cuentan los de prueba)
-		mensaje.CMD = opcion;
+		//mensaje.CMD = opcion;
 		break;
 	case 5:
 		// Cerrar el programa del receptor
-		mensaje.CMD = opcion;
+		//mensaje.CMD = opcion;
 		break;
 	case 6:
 		break;
@@ -126,7 +128,7 @@ int main()
 void cb(void)
 {
 	if (transmisionIniciada)
-	{ // si la transmisión está activa
+	{ printf("hoa\n");// si la transmisión está activa
 		// Escribe en el pin TX
 		if (numero_bits_transmitidos == 0)
 		{							 // si el numero de bits es 0
@@ -177,4 +179,13 @@ void cb(void)
 void iniciarTransmision()
 {
 	transmisionIniciada = true;
+}
+
+void limpiarMensaje(Protocolo &mensaje)
+{
+	memset(mensaje.DATA, 0, sizeof(mensaje.DATA));
+	memset(mensaje.FCS, 0, sizeof(mensaje.FCS));
+	memset(mensaje.Frames, 0, sizeof(mensaje.Frames));
+	mensaje.CMD = 0;
+	mensaje.LNG = 0;
 }
