@@ -1,23 +1,39 @@
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "funciones.h"
-#include <string.h>
 
-void empaquetar(Protocolo & proto)
+
+int empaquetar(Protocolo & proto)
 {
-	proto.Frames[0] = (proto.CMD & 0x7F) | ((proto.LNG & 0x01) << 7); // guardar CMD(7) y LSB de LNG(1) en Frames[0]
-	proto.Frames[1] = ((proto.LNG >> 1) & 0x1F);					  // guardar los 5 bits siguientes y el siguiente bit de LNG en Frames[1]
-	proto.LNG = strlen((const char*)proto.DATA);									  // asigna la longitud del mensaje
-	if (proto.LNG > 0) // si quedan datos por enviar, se encapsulan
-	{
-		for (size_t i = 0; i < proto.LNG; i++)
-		{ 
-			proto.Frames[i + 2] = proto.DATA[i]; // guarda los datos de DATA en Frames
-		}
-	}
-	unsigned int fcsValue = fcs(proto.Frames, proto.LNG + 2); // calcula el fcs de los datos enviados
-	proto.Frames[proto.LNG + 3] =  fcsValue & 0xFF; // calcula y guarda fsc de Frames en frames, LSB
-	proto.Frames[proto.LNG + 4] = fcsValue >> 8 & 0x03; // calcula y guarda fsc de Frames en frames, MSB
+    //Protocolo
+    // CMD 7 bits / LNG 6 bits / DATA 63 bytes / FCS 10 bits
+    if (proto.LNG%2==0){
+        proto.Frames[0] = (proto.CMD & 0x7F) | 2*((proto.LNG & 0x01) << 7); // guardar CMD(7) y LSB de LNG(1) en Frames[0]
+        proto.Frames[1] = 2*((proto.LNG >> 1) & 0x1F); // guardar los 5 bits siguientes y el siguiente bit de LNG en Frames[1]
+    }else{
+        proto.Frames[0] = (proto.CMD & 0x7F) | 2*((proto.LNG & 0x01) << 7); // guardar CMD(7) y LSB de LNG(1) en Frames[0]
+        proto.Frames[1] = 2*((proto.LNG >> 1) & 0x1F)+1; // guardar los 5 bits siguientes y el siguiente bit de LNG en Frames[1]       
+    }
+    if(proto.LNG > 0) // si quedan datos por enviar, se encapsulan
+    {
+        for(size_t i = 0; i < proto.LNG; i++)
+        {                   // MSB del dato anterior + LSB del dato nuevo.
+            proto.Frames[i + 2] = proto.DATA[i];
+        }
+    }
+    unsigned int fcsValue = fcs(proto.Frames, proto.LNG+2);
+    proto.FCS[0] = (fcsValue >> 8) & 0xFF;  
+    proto.FCS[1] = fcsValue & 0xFF;  
+    proto.Frames[proto.LNG+2] = proto.FCS[0]; //calcula y guarda fsc de Frames en frames
+    proto.Frames[proto.LNG + 3] = proto.FCS[1];
+
+	printf("Empaquetando mensaje...\n");
+	printf("Su mensaje es %s,\n de largo %d\n\n", proto.DATA, proto.LNG);
+
+	imprimirBytes(proto.Frames, proto.LNG + 4);
+
+    return proto.LNG + 4;
 }
 
 // FCS retorna la cantidad de bits en 1 de un arreglo de bytes, se usa para verificar la integridad de los datos
@@ -56,17 +72,14 @@ bool desempaquetar(Protocolo & proto)
 
 void obtenerInformacion(Protocolo &proto)
 {
-	printf("Ingrese el comando:\n");
-	scanf("%d", &proto.CMD);
-	printf("Ingrese su mensaje a enviar:\n");
-	scanf("%s", proto.DATA);
-	printf("Su mensaje es %s, de %d caracteres\n", proto.DATA, proto.LNG);
-	if (proto.LNG > 0 && proto.DATA[proto.LNG - 1] == '\n')
-	{
-		proto.DATA[proto.LNG - 1] = '\0';
-		proto.LNG--;
-	}
-
+    printf("Ingrese su mensaje:\n");
+    fgets((char *)proto.DATA, sizeof(proto.DATA), stdin);
+    proto.LNG = strlen((const char *)proto.DATA);
+    if (proto.LNG > 0 && proto.DATA[proto.LNG - 1] == '\n') {
+        proto.DATA[proto.LNG - 1] = '\0';
+        proto.LNG--;
+    }
+    memcpy(proto.Frames, proto.Frames, proto.LNG + 4);
 }
 
 bool leerMensaje(Protocolo proto)
@@ -78,3 +91,21 @@ bool leerMensaje(Protocolo proto)
 	system("pause");
 	return estado;
 }
+
+void imprimirBits(BYTE byte)
+{
+	for (int i = 7; i >= 0; i--)
+	{
+		printf("%d", (byte >> i) & 0x01);
+	}
+	printf("\n");
+}
+
+void imprimirBytes(BYTE *arr, int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		imprimirBits(arr[i]);
+	}
+}
+

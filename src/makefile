@@ -11,8 +11,8 @@ all:
 	g++ emisor.o funciones.o -o emisor
 	g++ -c receptor.cpp -o receptor.o
 	g++ receptor.o funciones.o -o receptor
-	g++ envia_bytes.cpp -o envia_bytes
-	g++ recibe_bytes.cpp -o recibe_bytes
+	g++ emisor.cpp -o emisor
+	g++ receptor.cpp -o receptor
 	g++ delay.cpp -o delay
 	del *.o
 	
@@ -31,17 +31,31 @@ endif
 ifeq ($(uname_S), Linux)
 all:
 	g++ -c funciones.cpp -lwiringPi
-	g++ -c envia_bytes.cpp -lwiringPi
-	g++ -c recibe_bytes.cpp -lwiringPi
-	g++ -o emisor envia_bytes.o funciones.o -lwiringPi
-	g++ -o receptor recibe_bytes.o funciones.o -lwiringPi
+	g++ -c emisor.cpp -lwiringPi
+	g++ -c receptor.cpp -lwiringPi
+	g++ -o emisor emisor.o funciones.o -lwiringPi
+	g++ -o receptor receptor.o funciones.o -lwiringPi
 	g++ -o delay delay.cpp -lwiringPi
+	rm -rf *.o
 
 run-emisor:
+	g++ -c funciones.cpp -lwiringPi
+	g++ -c emisor.cpp -lwiringPi
+	g++ -o emisor emisor.o funciones.o -lwiringPi
+	rm -rf *.o
 	sudo ./emisor
 
 run-receptor:
+	g++ -c funciones.cpp -lwiringPi
+	g++ -c receptor.cpp -lwiringPi
+	g++ -o receptor receptor.o funciones.o -lwiringPi
+	rm -rf *.o
 	sudo ./receptor
+
+run-delay:
+	g++ -o delay delay.cpp -lwiringPi
+	rm -rf *.o
+	sudo ./delay
 
 clear:
 	rm -rf *.o

@@ -6,7 +6,7 @@
 // Guarda todos los campos CMD y DATA en el arreglo de bytes Frames
 // Calcula el largo del mensaje y lo guarda en Frames.
 // Calcula el chksum y lo guarda en el arreglo de bytes FCS.
-void empaquetar(Protocolo &proto);
+int empaquetar(Protocolo & proto);
 
 // Retorna verdadero si la paridad es correcta, falso si la paridad no es correcta.
 bool desempaquetar(Protocolo &proto);
@@ -19,5 +19,14 @@ void obtenerInformacion(Protocolo &proto);
 
 // recibe un mensaje e imprime por pantalla sus datos.
 bool leerMensaje(Protocolo proto);
+
+// Imprime por pantalla los bits de un byte.
+void imprimirBits(BYTE byte);
+
+void imprimirBytes(BYTE *arr, int size);
+
+void cb(void);
+
+void iniciarTransmision();
 
 #endif

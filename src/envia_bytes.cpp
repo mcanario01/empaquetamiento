@@ -58,22 +58,34 @@ void cb(void)
 	if (transmisionIniciada)
 	{ // si la transmisión está activa
 		// Escribe en el pin TX
-		if (numero_bits_transmitidos != 0)
+		if (numero_bits_transmitidos == 0)
 		{							 // si el numero de bits es 0
-			digitalWrite(TX_PIN, (mensaje.Frames[numero_bytes_transmitidos] >> (numero_bits_transmitidos - 1)) & 0x01);
+			digitalWrite(TX_PIN, 0); // Bit de inicio
+		}
+		else if (numero_bits_transmitidos < (CANTIDAD_DE_BYTES + BYTES_EXTRAS) - 1)
+		{
+			digitalWrite(TX_PIN, (mensaje.Frames[numero_bytes_transmitidos] >> (numero_bits_transmitidos - 1)) & 0x01); // Bit de dato
+																		 // printf("%d",(mensaje.Frames[numero_bytes_transmitidos]>>(numero_bits_transmitidos-1))&0x01);
+		}
+		else if (numero_bits_transmitidos == CANTIDAD_DE_BYTES + BYTES_EXTRAS - 1)
+		{
+			//      printf("\n");
+			numero_de_unos = (mensaje.Frames[numero_bytes_transmitidos] & 0x01) + ((mensaje.Frames[numero_bytes_transmitidos] & 0x02) >> 1) + ((mensaje.Frames[numero_bytes_transmitidos] & 0x04) >> 2) +
+					((mensaje.Frames[numero_bytes_transmitidos] & 0x08) >> 3) + ((mensaje.Frames[numero_bytes_transmitidos] & 0x10) >> 4) + ((mensaje.Frames[numero_bytes_transmitidos] & 0x20) >> 5) +
+					((mensaje.Frames[numero_bytes_transmitidos] & 0x40) >> 6) + ((mensaje.Frames[numero_bytes_transmitidos] & 0x80) >> 7);
+			digitalWrite(TX_PIN, numero_de_unos % 2 == 0); // Bit de paridad
 		}
 		else
-		{ // Bit de dato
-			digitalWrite(TX_PIN, 0); // Si el numero de bits es 0, el bit de dato es 0
+		{
+			digitalWrite(TX_PIN, 1); // Canal libre durante 2 clocks
 		}
-
 		// Actualiza contador de bits
 		numero_bits_transmitidos++;
 
 		// Actualiza contador de bytes
-		if (numero_bits_transmitidos == 9)
+		if (numero_bits_transmitidos == 11)
 		{
-			numero_bits_transmitidos = 1;
+			numero_bits_transmitidos = 0;
 			numero_bytes_transmitidos++;
 
 			// Finaliza la comunicación
