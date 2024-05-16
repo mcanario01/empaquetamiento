@@ -124,7 +124,19 @@ int ContarMensajes(){
     }
     fclose(texto);
     return numero;
-}    
+}
+
+void BuscarArchivo(Protocolo &proto)
+{
+    printf("Ingrese su mensaje:\n");
+    fgets((char *)proto.DATA, sizeof(proto.DATA), stdin);
+    proto.LNG = strlen((const char *)proto.DATA);
+    if (proto.LNG > 0 && proto.DATA[proto.LNG - 1] == '\n') {
+        proto.DATA[proto.LNG - 1] = '\0';
+        proto.LNG--;
+    }
+    memcpy(proto.Frames, proto.Frames, proto.LNG + 4);
+}
 
 void EncontrarArchivo(Protocolo mensaje){
     char linea[LARGO_DATA];
