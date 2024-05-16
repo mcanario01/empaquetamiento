@@ -106,9 +106,9 @@ int main()
 		break;
 	}
 	case 3:
-		// Se debe enviar un mensaje con el nombre de un archivo de texto de prueba en el receptor, con dicho comando, el receptor debe mostrar el contenido del archivo
-		// consola en caso de que este exista, en caso contrario el receptor debe mostrar por consola que el archivo no existe.
-		//mensaje.CMD = opcion;
+		mensaje.CMD = opcion;
+		BuscarArchivo(mensaje);
+		empaquetar(mensaje);
 		break;
 	case 4:
 		// El receptor debe imprimir los mensajes recibidos correctamente y con error (no cuentan los de prueba)
