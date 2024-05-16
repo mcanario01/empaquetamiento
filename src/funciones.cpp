@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <wiringPi.h>
 #include "funciones.h"
 
 
@@ -9,11 +10,11 @@ int empaquetar(Protocolo & proto)
     //Protocolo
     // CMD 7 bits / LNG 6 bits / DATA 63 bytes / FCS 10 bits
     if (proto.LNG%2==0){
-        proto.Frames[0] = (proto.CMD & 0x7F) | 2*((proto.LNG & 0x01) << 7); // guardar CMD(7) y LSB de LNG(1) en Frames[0]
-        proto.Frames[1] = 2*((proto.LNG >> 1) & 0x1F); // guardar los 5 bits siguientes y el siguiente bit de LNG en Frames[1]
+        proto.Frames[0] = (proto.CMD & 0x7F) | ((proto.LNG & 0x01) << 7); // guardar CMD(7) y LSB de LNG(1) en Frames[0]
+        proto.Frames[1] = ((proto.LNG >> 1) & 0x1F); // guardar los 5 bits siguientes y el siguiente bit de LNG en Frames[1]
     }else{
-        proto.Frames[0] = (proto.CMD & 0x7F) | 2*((proto.LNG & 0x01) << 7); // guardar CMD(7) y LSB de LNG(1) en Frames[0]
-        proto.Frames[1] = 2*((proto.LNG >> 1) & 0x1F)+1; // guardar los 5 bits siguientes y el siguiente bit de LNG en Frames[1]       
+        proto.Frames[0] = (proto.CMD & 0x7F) | ((proto.LNG & 0x01) << 7); // guardar CMD(7) y LSB de LNG(1) en Frames[0]
+        proto.Frames[1] = ((proto.LNG >> 1) & 0x1F) + 1; // guardar los 5 bits siguientes y el siguiente bit de LNG en Frames[1]       
     }
     if(proto.LNG > 0) // si quedan datos por enviar, se encapsulan
     {
@@ -162,3 +163,4 @@ void MensajesRecibidos(){
     int Total=Correctos+Incorrectos;
     printf("Mensajes enviados correctamente:%d\nMensajes enviados Incorrectamente:%d\nTotal de mensajes enviados:%d\n",Correctos,Incorrectos,Total);
 }
+

@@ -28,40 +28,43 @@
 #define BYTES_EXTRAS 4
 
 // DECLARACION DE PROTOTIPOS
-void cb(void);			   // función de interrupción
-void iniciarTransmision(); // función para iniciar la transmisión
+void cb(void);							 // función de interrupción
+void iniciarTransmision();				 // función para iniciar la transmisión
 void limpiarMensaje(Protocolo &mensaje); // función para limpiar el mensaje
+void detectarEmisor(int pin, bool &valor_aux);
 
 // VARIABLES GLOBALES
 volatile int numero_bits_transmitidos = 0;	// guarda el número de bits transmitidos
 volatile int numero_bytes_transmitidos = 0; // guarda el número de bytes transmitidos
 
-
-Protocolo mensaje;													 // Se crea un mensaje de prueba
+Protocolo mensaje; // Se crea un mensaje de prueba
 
 int numero_de_unos = 0;			  // es el número de unos en el byte
 bool transmisionIniciada = false; // indica si la transmisión está activa
 
 int main()
 {
-	if (wiringPiSetupGpio() == -1)
+	if (wiringPiSetup() == -1)
 	{
 		printf("Error");
 		return 0;
 	}
 
 	// CONFIGURA INTERRUPCION PIN CLOCK (PUENTEADO A PIN PWM)
+	
+	
 	if (wiringPiISR(DELAY_PIN, INT_EDGE_RISING, &cb) < 0)
 	{
 		printf("Unable to start interrupt function\n"); // si hay error al configurar la interrupción, imprime mensaje
 	}
-
+	
 
 	// CONFIGURA PINES DE ENTRADA SALIDA
 	pinMode(TX_PIN, OUTPUT);
-	int Mensajes_Enviados=ContarMensajes("mensajes");
-	printf("---------------------------------\n");
-	printf("Mensajes enviados: %d\n",Mensajes_Enviados);
+
+	//int Mensajes_Enviados = ContarMensajes("mensajes");
+	//printf("---------------------------------\n");
+	//printf("Mensajes enviados: %d\n", Mensajes_Enviados);
 	printf("---------------------------------\n");
 	printf("MENU PRINCIPAL\n");
 	printf("Seleccione una opcion\n[1]Enviar mensaje de texto\n[2]Enviar mensaje de prueba\n[3]Mostrar contenido\n[4]Contador de mensajes\n[5]Cerrar el emisor\n[6]Salir del programa\n");
@@ -75,12 +78,15 @@ int main()
 
 		limpiarMensaje(mensaje); // Se limpia el mensaje
 		mensaje.CMD = opcion;
-		obtenerInformacion(mensaje);										 // Se solicita al usuario el mensaje a enviar
-		empaquetar(mensaje);												 // Se empaqueta el mensaje
+		obtenerInformacion(mensaje); // Se solicita al usuario el mensaje a enviar
+		empaquetar(mensaje);		 // Se empaqueta el mensaje
 
 		iniciarTransmision();		// inicia la transmisión
-		while (transmisionIniciada) // mientras la transmisión esté activa
-			delay(2000);			// espera 2 segundos para que termine la transmisión
+		//bool valor_pin_aux = 0;
+		while(transmisionIniciada)
+		{
+			delay(5000);
+		}
 		// Enviar mensaje de texto y ser guardado en un archivo mensajes.txt
 		break;
 	}
@@ -129,18 +135,19 @@ int main()
 void cb(void)
 {
 	if (transmisionIniciada)
-	{ printf("hoa\n");// si la transmisión está activa
+	{
+		printf("hoa\n"); // si la transmisión está activa
 		// Escribe en el pin TX
 		if (numero_bits_transmitidos == 0)
 		{							 // si el numero de bits es 0
 			digitalWrite(TX_PIN, 0); // Bit de inicio
 		}
-		else if (numero_bits_transmitidos < (CANTIDAD_DE_BYTES + BYTES_EXTRAS) - 1)
+		else if (numero_bits_transmitidos < (mensaje.LNG + BYTES_EXTRAS) - 1)
 		{
 			digitalWrite(TX_PIN, (mensaje.Frames[numero_bytes_transmitidos] >> (numero_bits_transmitidos - 1)) & 0x01); // Bit de dato
 																														// printf("%d",(mensaje.Frames[numero_bytes_transmitidos]>>(numero_bits_transmitidos-1))&0x01);
 		}
-		else if (numero_bits_transmitidos == CANTIDAD_DE_BYTES + BYTES_EXTRAS - 1)
+		else if (numero_bits_transmitidos == mensaje.LNG + BYTES_EXTRAS - 1)
 		{
 			//      printf("\n");
 			numero_de_unos = (mensaje.Frames[numero_bytes_transmitidos] & 0x01) + ((mensaje.Frames[numero_bytes_transmitidos] & 0x02) >> 1) + ((mensaje.Frames[numero_bytes_transmitidos] & 0x04) >> 2) +
@@ -162,7 +169,7 @@ void cb(void)
 			numero_bytes_transmitidos++;
 
 			// Finaliza la comunicación
-			if (numero_bytes_transmitidos == CANTIDAD_DE_BYTES + BYTES_EXTRAS)
+			if (numero_bytes_transmitidos == mensaje.LNG + BYTES_EXTRAS)
 			{
 				transmisionIniciada = false;
 				numero_bytes_transmitidos = 0;
@@ -189,4 +196,15 @@ void limpiarMensaje(Protocolo &mensaje)
 	memset(mensaje.Frames, 0, sizeof(mensaje.Frames));
 	mensaje.CMD = 0;
 	mensaje.LNG = 0;
+}
+
+void detectarEmisor(int pin, bool &valor_aux)
+{
+
+    bool valor_pin = digitalRead(pin);
+
+    if(valor_pin && (valor_aux != valor_pin)){
+        cb();
+        valor_aux = valor_pin;
+    }
 }

@@ -35,6 +35,10 @@ void BuscarArchivo(Protocolo &proto);
 
 void EncontrarArchivo(Protocolo mensaje);
 
+// Lee el archivo entregado y devuelve el numero de mensajes enviados
 void MensajesRecibidos();
+
+//detecta el pin del clock y ejecuta la función de callback
+void detectarEmisor(int pin);
 
 #endif

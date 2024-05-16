@@ -5,6 +5,8 @@
 #define LARGO_DATA 64
 #define BYTES_EXTRAS 4
 
+#define VELOCIDAD 9600
+
 struct Protocolo
 {
     BYTE CMD;   // 7 bit utiles, 1 bit de relleno
