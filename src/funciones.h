@@ -31,4 +31,6 @@ void iniciarTransmision();
 
 int ContarMensajes(); //Lee el archivo "mensajes.txt" y devuelve el numero de mensajes enviados
 
+void EncontrarArchivo(Protocolo mensaje);
+
 #endif
