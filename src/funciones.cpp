@@ -115,8 +115,11 @@ void imprimirBytes(BYTE *arr, int size)
 	}
 }
 
-int ContarMensajes(){
-    FILE * texto =fopen("mensajes.txt","r");
+int ContarMensajes(const char *arch){
+    char nombreArch[LARGO_DATA];
+    strcpy(nombreArch, arch);
+    strcat(nombreArch,".txt");
+    FILE * texto =fopen(nombreArch,"r");
     char linea[LARGO_DATA];
     int numero=0;
     while (fgets(linea, sizeof(linea), texto) != NULL) {
@@ -124,7 +127,7 @@ int ContarMensajes(){
     }
     fclose(texto);
     return numero;
-}
+} 
 
 void BuscarArchivo(Protocolo &proto)
 {
@@ -151,4 +154,11 @@ void EncontrarArchivo(Protocolo mensaje){
         printf("El archivo %s no existe o no se encontro\n",(char*)mensaje.DATA);
     }
 
+}
+
+void MensajesRecibidos(){
+    int Correctos=ContarMensajes("mensajes");
+    int Incorrectos=ContarMensajes("Errores");
+    int Total=Correctos+Incorrectos;
+    printf("Mensajes enviados correctamente:%d\nMensajes enviados Incorrectamente:%d\nTotal de mensajes enviados:%d\n",Correctos,Incorrectos,Total);
 }
