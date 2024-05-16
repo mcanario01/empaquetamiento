@@ -59,7 +59,7 @@ int main()
 
 	// CONFIGURA PINES DE ENTRADA SALIDA
 	pinMode(TX_PIN, OUTPUT);
-	int Mensajes_Enviados=ContarMensajes();
+	int Mensajes_Enviados=ContarMensajes("mensajes");
 	printf("---------------------------------\n");
 	printf("Mensajes enviados: %d\n",Mensajes_Enviados);
 	printf("---------------------------------\n");
@@ -111,12 +111,11 @@ int main()
 		empaquetar(mensaje);
 		break;
 	case 4:
-		// El receptor debe imprimir los mensajes recibidos correctamente y con error (no cuentan los de prueba)
-		//mensaje.CMD = opcion;
+		mensaje.CMD = opcion;
 		break;
 	case 5:
 		// Cerrar el programa del receptor
-		//mensaje.CMD = opcion;
+		mensaje.CMD = opcion;
 		break;
 	case 6:
 		break;
