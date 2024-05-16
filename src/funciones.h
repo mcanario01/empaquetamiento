@@ -29,10 +29,12 @@ void cb(void);
 
 void iniciarTransmision();
 
-int ContarMensajes(); //Lee el archivo "mensajes.txt" y devuelve el numero de mensajes enviados
+int ContarMensajes(const char *arch); //Lee el archivo entregado y devuelve el numero de mensajes enviados
 
 void BuscarArchivo(Protocolo &proto);
 
 void EncontrarArchivo(Protocolo mensaje);
+
+void MensajesRecibidos();
 
 #endif
