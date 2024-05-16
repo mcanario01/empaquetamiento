@@ -109,3 +109,13 @@ void imprimirBytes(BYTE *arr, int size)
 	}
 }
 
+int ContarMensajes(){
+    FILE * texto =fopen("mensajes.txt","r");
+    char linea[LARGO_DATA];
+    int numero=0;
+    while (fgets(linea, sizeof(linea), texto) != NULL) {
+    numero++;
+    }
+    fclose(texto);
+    return numero;
+}    
