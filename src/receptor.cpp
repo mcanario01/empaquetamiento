@@ -45,6 +45,9 @@ int main()
   while (nbytes < 10)
     delay(300);
 
+  //if (proto.CMD==2){
+   // return 0;}
+
   for (int i = 0; i < nbytes; i++)
   {
     printf("Byte %d: %d\n", i, bytes[i]);
