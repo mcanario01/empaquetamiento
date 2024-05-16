@@ -72,6 +72,8 @@ bool desempaquetar(Protocolo & proto)
 
 void obtenerInformacion(Protocolo &proto)
 {
+	char linea[LARGO_DATA];
+    int posicion=1;
     printf("Ingrese su mensaje:\n");
     fgets((char *)proto.DATA, sizeof(proto.DATA), stdin);
     proto.LNG = strlen((const char *)proto.DATA);
@@ -80,6 +82,10 @@ void obtenerInformacion(Protocolo &proto)
         proto.LNG--;
     }
     memcpy(proto.Frames, proto.Frames, proto.LNG + 4);
+	FILE * texto=fopen("mensajes.txt","a+");
+    while (fgets(linea, sizeof(linea), texto) != NULL) {
+        posicion++;} 
+	fprintf(texto,"%s\n",proto.DATA);
 }
 
 bool leerMensaje(Protocolo proto)
