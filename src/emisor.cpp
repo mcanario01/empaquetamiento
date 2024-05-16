@@ -59,8 +59,10 @@ int main()
 
 	// CONFIGURA PINES DE ENTRADA SALIDA
 	pinMode(TX_PIN, OUTPUT);
-
-
+	int Mensajes_Enviados=ContarMensajes();
+	printf("---------------------------------\n");
+	printf("Mensajes enviados: %d\n",Mensajes_Enviados);
+	printf("---------------------------------\n");
 	printf("MENU PRINCIPAL\n");
 	printf("Seleccione una opcion\n[1]Enviar mensaje de texto\n[2]Enviar mensaje de prueba\n[3]Mostrar contenido\n[4]Contador de mensajes\n[5]Cerrar el emisor\n[6]Salir del programa\n");
 	int opcion;
