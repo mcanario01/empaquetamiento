@@ -125,3 +125,18 @@ int ContarMensajes(){
     fclose(texto);
     return numero;
 }    
+
+void EncontrarArchivo(Protocolo mensaje){
+    char linea[LARGO_DATA];
+    strcat((char*)mensaje.DATA,".txt");
+    FILE * archivo= fopen((char*)mensaje.DATA,"r");
+    if(archivo != NULL){
+        while (fgets(linea, sizeof(linea), archivo) != NULL) {
+            printf("%s", linea);
+        }
+        fclose(archivo);
+    } else {
+        printf("El archivo %s no existe o no se encontro\n",(char*)mensaje.DATA);
+    }
+
+}
