@@ -26,6 +26,7 @@ BYTE bytes[LARGO_MENSAJE];
 
 bool parityError = 0;
 volatile BYTE len = 10;
+Protocolo mensaje;
 
 int main()
 {
@@ -43,10 +44,11 @@ int main()
 
 	printf("Delay\n");
 	while (nbytes < 15)
-		delay(300);
+		delay(500);
+	desempaquetar(Mensaje);
 
-	// if (proto.CMD==2){
-	//  return 0;}
+	 if (mensaje.CMD==1){
+	     LeerMensaje();}
 
 	/*
 	if(proto.CMD)==4){
