@@ -65,7 +65,7 @@ int main()
 	//int Mensajes_Enviados = ContarMensajes("mensajes");
 	//printf("---------------------------------\n");
 	//printf("Mensajes enviados: %d\n", Mensajes_Enviados);
-	printf("---------------------------------\n");
+	system("clear");
 	printf("MENU PRINCIPAL\n");
 	printf("Seleccione una opcion\n[1]Enviar mensaje de texto\n[2]Enviar mensaje de prueba\n[3]Mostrar contenido\n[4]Contador de mensajes\n[5]Cerrar el emisor\n[6]Salir del programa\n");
 	int opcion;
@@ -136,7 +136,6 @@ void cb(void)
 {
 	if (transmisionIniciada)
 	{
-		printf("hoa\n"); // si la transmisión está activa
 		// Escribe en el pin TX
 		if (numero_bits_transmitidos == 0)
 		{							 // si el numero de bits es 0

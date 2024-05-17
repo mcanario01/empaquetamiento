@@ -23,16 +23,22 @@ bool leerMensaje(Protocolo proto);
 // Imprime por pantalla los bits de un byte.
 void imprimirBits(BYTE byte);
 
+// Imprime por pantalla los bytes de un arreglo.
 void imprimirBytes(BYTE *arr, int size);
 
-void cb(void);
+// Imprime por pantalla los campos de un mensaje.
+void imprimirCampos(Protocolo proto);
 
+// Inicia la transmisión de un mensaje.
 void iniciarTransmision();
 
-int ContarMensajes(const char *arch); //Lee el archivo entregado y devuelve el numero de mensajes enviados
+//Lee el archivo entregado y devuelve el numero de mensajes enviados
+int ContarMensajes(const char *arch); 
 
+// Busca un archivo en el directorio actual y lo envía al receptor.
 void BuscarArchivo(Protocolo &proto);
 
+// Envia un archivo al receptor.
 void EncontrarArchivo(Protocolo mensaje);
 
 // Lee el archivo entregado y devuelve el numero de mensajes enviados

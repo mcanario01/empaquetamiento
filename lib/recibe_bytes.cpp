@@ -10,7 +10,7 @@
 #define BYTE unsigned char
 
 // PROTOTIPOS
-void processBit(bool level);
+void processBit(bool señal);
 void cb(void);
 
 // VARIABLES GLOBALES
@@ -18,11 +18,11 @@ volatile int errors = 0;
 volatile int nbits = 0;
 volatile int nbytes = 0;
 bool transmissionStarted = false;
-bool parity = 0;
-int nones = 0;
+bool paridad = 0;
+int cantidad_de_unos = 0;
 BYTE bytes[50];
 
-bool parityError = 0;
+bool paridadError = 0;
 volatile BYTE len = 10;
 
 int main()
@@ -55,33 +55,33 @@ int main()
 
 void cb(void)
 {
-  bool level = digitalRead(RX_PIN); // Lee el nivel del pin RX
-  //  printf("%d",level);
+  bool señal = digitalRead(RX_PIN); // Lee el nivel del pin RX
+  //  printf("%d",señal);
   if (transmissionStarted)
   {
-    processBit(level);
+    processBit(señal);
   }
-  else if (level == 0 && !transmissionStarted)
+  else if (señal == 0 && !transmissionStarted)
   {
     transmissionStarted = true;
     nbits = 1;
   }
 }
 
-void processBit(bool level)
+void processBit(bool señal)
 {
   if (nbits < 9)
   {
-    bytes[nbytes] |= level << (nbits - 1);
+    bytes[nbytes] |= señal << (nbits - 1);
   }
   else if (nbits == 9)
   {
     //    printf("\n");
-    parity = level;
-    nones = (bytes[nbytes] & 0x01) + ((bytes[nbytes] & 0x02) >> 1) + ((bytes[nbytes] & 0x04) >> 2) + ((bytes[nbytes] & 0x08) >> 3) + ((bytes[nbytes] & 0x10) >> 4) + ((bytes[nbytes] & 0x20) >> 5) + ((bytes[nbytes] & 0x40) >> 6) + ((bytes[nbytes] & 0x80) >> 7);
-    if (parity != (nones % 2 == 0))
+    paridad = señal;
+    cantidad_de_unos = (bytes[nbytes] & 0x01) + ((bytes[nbytes] & 0x02) >> 1) + ((bytes[nbytes] & 0x04) >> 2) + ((bytes[nbytes] & 0x08) >> 3) + ((bytes[nbytes] & 0x10) >> 4) + ((bytes[nbytes] & 0x20) >> 5) + ((bytes[nbytes] & 0x40) >> 6) + ((bytes[nbytes] & 0x80) >> 7);
+    if (paridad != (cantidad_de_unos % 2 == 0))
     {
-      parityError = true;
+      paridadError = true;
     }
     nbytes++;
     transmissionStarted = false;

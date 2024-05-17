@@ -30,6 +30,8 @@ int empaquetar(Protocolo & proto)
     proto.Frames[proto.LNG + 3] = proto.FCS[1];
 
 	printf("Empaquetando mensaje...\n");
+    
+
 	printf("Su mensaje es %s,\n de largo %d\n\n", proto.DATA, proto.LNG);
 
 	imprimirBytes(proto.Frames, proto.LNG + 4);
@@ -116,6 +118,23 @@ void imprimirBytes(BYTE *arr, int size)
 	}
 }
 
+void imprimirCampos(Protocolo proto)
+{
+    printf("CMD:");
+    imprimirBits(proto.CMD);
+    printf("\n");
+    printf("LNG:");
+    imprimirBits(proto.LNG);
+    printf("\n");
+    printf("DATA:\n");
+    imprimirBytes(proto.DATA, proto.LNG);
+    printf("\n");
+    printf("FCS:");
+    imprimirBytes(proto.FCS, sizeof(proto.FCS));
+    printf("\n");
+    return;
+}
+
 int ContarMensajes(const char *arch){
     char nombreArch[LARGO_DATA];
     strcpy(nombreArch, arch);
@@ -140,6 +159,7 @@ void BuscarArchivo(Protocolo &proto)
         proto.LNG--;
     }
     memcpy(proto.Frames, proto.Frames, proto.LNG + 4);
+    return;
 }
 
 void EncontrarArchivo(Protocolo mensaje){
@@ -154,6 +174,7 @@ void EncontrarArchivo(Protocolo mensaje){
     } else {
         printf("El archivo %s no existe o no se encontro\n",(char*)mensaje.DATA);
     }
+    return;
 
 }
 
@@ -162,5 +183,6 @@ void MensajesRecibidos(){
     int Incorrectos=ContarMensajes("Errores");
     int Total=Correctos+Incorrectos;
     printf("Mensajes enviados correctamente:%d\nMensajes enviados Incorrectamente:%d\nTotal de mensajes enviados:%d\n",Correctos,Incorrectos,Total);
+    return;
 }
 
