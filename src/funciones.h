@@ -18,7 +18,7 @@ unsigned int fcs(BYTE *arr, int size);
 void obtenerInformacion(Protocolo &proto);
 
 // recibe un mensaje e imprime por pantalla sus datos.
-bool leerMensaje(Protocolo proto);
+bool leerMensaje(Protocolo proto,bool estado);
 
 // Imprime por pantalla los bits de un byte.
 void imprimirBits(BYTE byte);
