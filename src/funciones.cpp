@@ -80,18 +80,17 @@ void obtenerInformacion(Protocolo &proto)
         proto.LNG--;
     }
     memcpy(proto.Frames, proto.Frames, proto.LNG + 4);
-	FILE * texto=fopen("mensajes.txt","a+");
-    while (fgets(linea, sizeof(linea), texto) != NULL) {
-        posicion++;} 
-	fprintf(texto,"%s\n",proto.DATA);
 }
 
-bool leerMensaje(Protocolo proto)
-{
-	bool estado = desempaquetar(proto);										  // ejecuta desempaquetar en el proto dado
+bool leerMensaje(Protocolo proto,bool estado)
+{										  // ejecuta desempaquetar en el proto dado
 	printf("Se recibio un mensaje con estado: %s\n", estado ? "Correcto" : "Incorrecto"); // imprime por pantalla si el mensaje es correcto
 	printf("El largo del mensaje es: %d\n", proto.LNG);
 	printf("El mensaje es: %s\n", proto.DATA);
+	if(estado==true){
+		EscribirArchivo(mensajes,proto);}
+	else{
+		EscribirArchivo(errores,proto);}
 	return estado;
 }
 
@@ -160,3 +159,15 @@ void MensajesRecibidos(){
     printf("Mensajes enviados correctamente:%d\nMensajes enviados Incorrectamente:%d\nTotal de mensajes enviados:%d\n",Correctos,Incorrectos,Total);
 }
 
+void EscribirArchivo(const char* arch,Protocolo proto){
+	char nombreArch[LARGO_DATA];
+	strcpy(nombreArch, arch);
+        strcat(nombreArch,".txt")
+	char linea[LARGO_DATA];
+	int posicion=0;
+	FILE * texto=fopen(nombreArch,"a+");
+    	while (fgets(linea, sizeof(linea), texto) != NULL) {
+        posicion++;} 
+	fprintf(texto,"%s\n",proto.DATA);
+	fclose(nombreArch);
+}
