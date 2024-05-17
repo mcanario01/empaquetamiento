@@ -57,16 +57,21 @@ int main()
 			break;
 		}
 		case 3:{
-			
+		EncontrarArchivo(mensaje);
+		break;
 		}
+		case 4:{
+		ContarMensajes
+		MensajesRecibidos();
+		break;}
+		case 5:{
+		return 0}
+		default: {
+                 printf("Ha ocurrido un error, intente nuevamente\n");
+		}
+		
           }
-         
 
-
-	
-	if(proto.CMD)==4){
-	  MensajesRecibidos();
-	}
 	
 
 	for (int i = 0; i < nbytes; i++)
