@@ -85,7 +85,7 @@ int main()
 		//bool valor_pin_aux = 0;
 		while(transmisionIniciada)
 		{
-			delay(5000);
+			delay(500);
 		}
 		// Enviar mensaje de texto y ser guardado en un archivo mensajes.txt
 		break;
