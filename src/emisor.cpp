@@ -39,6 +39,8 @@ volatile int numero_bytes_transmitidos = 0; // guarda el número de bytes transm
 
 Protocolo mensaje; // Se crea un mensaje de prueba
 
+BYTE buffer_de_datos[CANTIDAD_DE_BYTES + BYTES_EXTRAS]; // buffer de datos
+
 int numero_de_unos = 0;			  // es el número de unos en el byte
 bool transmisionIniciada = false; // indica si la transmisión está activa
 
@@ -67,7 +69,7 @@ int main()
 	//printf("Mensajes enviados: %d\n", Mensajes_Enviados);
 	system("clear");
 	printf("MENU PRINCIPAL\n");
-	printf("Seleccione una opcion\n[1]Enviar mensaje de texto\n[2]Enviar mensaje de prueba\n[3]Mostrar contenido\n[4]Contador de mensajes\n[5]Cerrar el emisor\n[6]Salir del programa\n");
+	printf("Seleccione una opcion\n[1]Enviar mensaje de texto\n[2]Enviar mensaje de prueba\n[3]Mostrar contenido\n[4]Contador de mensajes\n[5]Cerrar el receptor\n[6]Salir del programa\n");
 	int opcion;
 	scanf("%d", &opcion);
 	getchar();
@@ -80,12 +82,14 @@ int main()
 		mensaje.CMD = opcion;
 		obtenerInformacion(mensaje); // Se solicita al usuario el mensaje a enviar
 		empaquetar(mensaje);		 // Se empaqueta el mensaje
+		memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
+		imprimirCampos(mensaje);
 
 		iniciarTransmision();		// inicia la transmisión
 		//bool valor_pin_aux = 0;
 		while(transmisionIniciada)
 		{
-			delay(500);
+			delay(100);
 		}
 		// Enviar mensaje de texto y ser guardado en un archivo mensajes.txt
 		break;
@@ -106,7 +110,7 @@ int main()
 		{
 			Protocolo mensaje2;
 			memcpy(mensaje2.Frames, mensaje.Frames, sizeof(mensaje.Frames) + 1);
-			contador_aciertos += leerMensaje(mensaje2);
+			//contador_aciertos += leerMensaje(mensaje2);
 		}
 		float porcentaje_aciertos = (contador_aciertos / cantidad_mensajes) * 100;
 		break;
@@ -122,6 +126,13 @@ int main()
 	case 5:
 		// Cerrar el programa del receptor
 		mensaje.CMD = opcion;
+		empaquetar(mensaje);
+		iniciarTransmision();		// inicia la transmisión
+		//bool valor_pin_aux = 0;
+		while(transmisionIniciada)
+		{
+			delay(500);
+		}
 		break;
 	case 6:
 		break;
@@ -143,15 +154,15 @@ void cb(void)
 		}
 		else if (numero_bits_transmitidos < (mensaje.LNG + BYTES_EXTRAS) - 1)
 		{
-			digitalWrite(TX_PIN, (mensaje.Frames[numero_bytes_transmitidos] >> (numero_bits_transmitidos - 1)) & 0x01); // Bit de dato
-																														// printf("%d",(mensaje.Frames[numero_bytes_transmitidos]>>(numero_bits_transmitidos-1))&0x01);
+			digitalWrite(TX_PIN, (buffer_de_datos[numero_bytes_transmitidos] >> (numero_bits_transmitidos - 1)) & 0x01); // Bit de dato
+																														// printf("%d",(buffer_de_datos[numero_bytes_transmitidos]>>(numero_bits_transmitidos-1))&0x01);
 		}
 		else if (numero_bits_transmitidos == mensaje.LNG + BYTES_EXTRAS - 1)
 		{
 			//      printf("\n");
-			numero_de_unos = (mensaje.Frames[numero_bytes_transmitidos] & 0x01) + ((mensaje.Frames[numero_bytes_transmitidos] & 0x02) >> 1) + ((mensaje.Frames[numero_bytes_transmitidos] & 0x04) >> 2) +
-							 ((mensaje.Frames[numero_bytes_transmitidos] & 0x08) >> 3) + ((mensaje.Frames[numero_bytes_transmitidos] & 0x10) >> 4) + ((mensaje.Frames[numero_bytes_transmitidos] & 0x20) >> 5) +
-							 ((mensaje.Frames[numero_bytes_transmitidos] & 0x40) >> 6) + ((mensaje.Frames[numero_bytes_transmitidos] & 0x80) >> 7);
+			numero_de_unos = (buffer_de_datos[numero_bytes_transmitidos] & 0x01) + ((buffer_de_datos[numero_bytes_transmitidos] & 0x02) >> 1) + ((buffer_de_datos[numero_bytes_transmitidos] & 0x04) >> 2) +
+							 ((buffer_de_datos[numero_bytes_transmitidos] & 0x08) >> 3) + ((buffer_de_datos[numero_bytes_transmitidos] & 0x10) >> 4) + ((buffer_de_datos[numero_bytes_transmitidos] & 0x20) >> 5) +
+							 ((buffer_de_datos[numero_bytes_transmitidos] & 0x40) >> 6) + ((buffer_de_datos[numero_bytes_transmitidos] & 0x80) >> 7);
 			digitalWrite(TX_PIN, numero_de_unos % 2 == 0); // Bit de paridad
 		}
 		else

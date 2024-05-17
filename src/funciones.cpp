@@ -90,9 +90,9 @@ bool leerMensaje(Protocolo proto,bool estado)
 	printf("El largo del mensaje es: %d\n", proto.LNG);
 	printf("El mensaje es: %s\n", proto.DATA);
 	if(estado==true){
-		EscribirArchivo(mensajes,proto);}
+		EscribirArchivo("mensajes",proto);}
 	else{
-		EscribirArchivo(errores,proto);}
+		EscribirArchivo("errores",proto);}
 	return estado;
 }
 
@@ -129,6 +129,7 @@ void imprimirCampos(Protocolo proto)
     printf("\n");
     return;
 }
+
 
 int ContarMensajes(const char *arch){
     char nombreArch[LARGO_DATA];
@@ -184,12 +185,12 @@ void MensajesRecibidos(){
 void EscribirArchivo(const char* arch,Protocolo proto){
 	char nombreArch[LARGO_DATA];
 	strcpy(nombreArch, arch);
-        strcat(nombreArch,".txt")
+        strcat(nombreArch,".txt");
 	char linea[LARGO_DATA];
 	int posicion=0;
 	FILE * texto=fopen(nombreArch,"a+");
     	while (fgets(linea, sizeof(linea), texto) != NULL) {
         posicion++;} 
 	fprintf(texto,"%s\n",proto.DATA);
-	fclose(nombreArch);
+	fclose(texto);
 }
