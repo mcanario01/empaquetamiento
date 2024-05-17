@@ -18,7 +18,7 @@ unsigned int fcs(BYTE *arr, int size);
 void obtenerInformacion(Protocolo &proto);
 
 // recibe un mensaje e imprime por pantalla sus datos.
-bool leerMensaje(Protocolo proto);
+bool leerMensaje(Protocolo proto,bool estado);
 
 // Imprime por pantalla los bits de un byte.
 void imprimirBits(BYTE byte);
@@ -43,6 +43,8 @@ void EncontrarArchivo(Protocolo mensaje);
 
 // Lee el archivo entregado y devuelve el numero de mensajes enviados
 void MensajesRecibidos();
+
+EscribirArchivo(const char* arch,Protocolo proto);
 
 //detecta el pin del clock y ejecuta la función de callback
 void detectarEmisor(int pin);

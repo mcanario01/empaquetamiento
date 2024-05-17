@@ -9,13 +9,10 @@ int empaquetar(Protocolo & proto)
 {
     //Protocolo
     // CMD 7 bits / LNG 6 bits / DATA 63 bytes / FCS 10 bits
-    if (proto.LNG%2==0){
+
         proto.Frames[0] = (proto.CMD & 0x7F) | ((proto.LNG & 0x01) << 7); // guardar CMD(7) y LSB de LNG(1) en Frames[0]
         proto.Frames[1] = ((proto.LNG >> 1) & 0x1F); // guardar los 5 bits siguientes y el siguiente bit de LNG en Frames[1]
-    }else{
-        proto.Frames[0] = (proto.CMD & 0x7F) | ((proto.LNG & 0x01) << 7); // guardar CMD(7) y LSB de LNG(1) en Frames[0]
-        proto.Frames[1] = ((proto.LNG >> 1) & 0x1F) + 1; // guardar los 5 bits siguientes y el siguiente bit de LNG en Frames[1]       
-    }
+    
     if(proto.LNG > 0) // si quedan datos por enviar, se encapsulan
     {
         for(size_t i = 0; i < proto.LNG; i++)
@@ -85,19 +82,17 @@ void obtenerInformacion(Protocolo &proto)
         proto.LNG--;
     }
     memcpy(proto.Frames, proto.Frames, proto.LNG + 4);
-	FILE * texto=fopen("mensajes.txt","a+");
-    while (fgets(linea, sizeof(linea), texto) != NULL) {
-        posicion++;} 
-	fprintf(texto,"%s\n",proto.DATA);
 }
 
-bool leerMensaje(Protocolo proto)
-{
-	bool estado = desempaquetar(proto);										  // ejecuta desempaquetar en el proto dado
+bool leerMensaje(Protocolo proto,bool estado)
+{										  // ejecuta desempaquetar en el proto dado
 	printf("Se recibio un mensaje con estado: %s\n", estado ? "Correcto" : "Incorrecto"); // imprime por pantalla si el mensaje es correcto
 	printf("El largo del mensaje es: %d\n", proto.LNG);
 	printf("El mensaje es: %s\n", proto.DATA);
-	system("pause");
+	if(estado==true){
+		EscribirArchivo(mensajes,proto);}
+	else{
+		EscribirArchivo(errores,proto);}
 	return estado;
 }
 
@@ -186,3 +181,15 @@ void MensajesRecibidos(){
     return;
 }
 
+void EscribirArchivo(const char* arch,Protocolo proto){
+	char nombreArch[LARGO_DATA];
+	strcpy(nombreArch, arch);
+        strcat(nombreArch,".txt")
+	char linea[LARGO_DATA];
+	int posicion=0;
+	FILE * texto=fopen(nombreArch,"a+");
+    	while (fgets(linea, sizeof(linea), texto) != NULL) {
+        posicion++;} 
+	fprintf(texto,"%s\n",proto.DATA);
+	fclose(nombreArch);
+}

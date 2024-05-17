@@ -43,6 +43,8 @@ Protocolo proto;
 bool paridadError = 0;
 // Guarda el largo del mensaje (despreciado)
 volatile BYTE len = 10;
+Protocolo mensaje;
+bool estado;
 
 int main()
 {
@@ -61,6 +63,36 @@ int main()
 		printf("Imposible iniciar la interrupción\n");
 	}
 
+	printf("Delay\n");
+	while (nbytes < 15)
+		delay(500);
+	estado=desempaquetar(mensaje);
+	switch(mensaje.CMD){
+		case 1:{
+	     LeerMensaje(mensaje,estado);
+		break;
+		}
+		case 2:{
+			//a
+			break;
+		}
+		case 3:{
+		EncontrarArchivo(mensaje);
+		break;
+		}
+		case 4:{
+		ContarMensajes
+		MensajesRecibidos();
+		break;}
+		case 5:{
+		return 0}
+		default: {
+                 printf("Ha ocurrido un error, intente nuevamente\n");
+		}
+		
+          }
+
+	
 	system("clear");
 	printf("Escuchando...\n");
 	while (numero_de_bytes < proto.LNG + 4)
