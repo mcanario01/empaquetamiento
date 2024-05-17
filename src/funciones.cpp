@@ -92,10 +92,6 @@ bool leerMensaje(Protocolo proto)
 	printf("Se recibio un mensaje con estado: %s\n", estado ? "Correcto" : "Incorrecto"); // imprime por pantalla si el mensaje es correcto
 	printf("El largo del mensaje es: %d\n", proto.LNG);
 	printf("El mensaje es: %s\n", proto.DATA);
-	FILE * texto=fopen("mensajes.txt","a+");
-    	while (fgets(linea, sizeof(linea), texto) != NULL) {
-        posicion++;} 
-	fprintf(texto,"%s\n",proto.DATA);
 	return estado;
 }
 
