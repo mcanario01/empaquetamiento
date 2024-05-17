@@ -9,13 +9,10 @@ int empaquetar(Protocolo & proto)
 {
     //Protocolo
     // CMD 7 bits / LNG 6 bits / DATA 63 bytes / FCS 10 bits
-    if (proto.LNG%2==0){
+
         proto.Frames[0] = (proto.CMD & 0x7F) | ((proto.LNG & 0x01) << 7); // guardar CMD(7) y LSB de LNG(1) en Frames[0]
         proto.Frames[1] = ((proto.LNG >> 1) & 0x1F); // guardar los 5 bits siguientes y el siguiente bit de LNG en Frames[1]
-    }else{
-        proto.Frames[0] = (proto.CMD & 0x7F) | ((proto.LNG & 0x01) << 7); // guardar CMD(7) y LSB de LNG(1) en Frames[0]
-        proto.Frames[1] = ((proto.LNG >> 1) & 0x1F) + 1; // guardar los 5 bits siguientes y el siguiente bit de LNG en Frames[1]       
-    }
+    
     if(proto.LNG > 0) // si quedan datos por enviar, se encapsulan
     {
         for(size_t i = 0; i < proto.LNG; i++)
@@ -95,7 +92,10 @@ bool leerMensaje(Protocolo proto)
 	printf("Se recibio un mensaje con estado: %s\n", estado ? "Correcto" : "Incorrecto"); // imprime por pantalla si el mensaje es correcto
 	printf("El largo del mensaje es: %d\n", proto.LNG);
 	printf("El mensaje es: %s\n", proto.DATA);
-	system("pause");
+	FILE * texto=fopen("mensajes.txt","a+");
+    	while (fgets(linea, sizeof(linea), texto) != NULL) {
+        posicion++;} 
+	fprintf(texto,"%s\n",proto.DATA);
 	return estado;
 }
 
