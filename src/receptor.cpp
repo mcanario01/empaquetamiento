@@ -46,21 +46,28 @@ int main()
 	printf("Delay\n");
 	while (nbytes < 15)
 		delay(500);
-	estado=desempaquetar(Mensaje);
-
-	 if (mensaje.CMD==1){
-	     LeerMensaje();
-	     if (estado==true){
-             
-
+	estado=desempaquetar(mensaje);
+	switch(mensaje.CMD){
+		case 1:{
+	     LeerMensaje(mensaje,estado);
+		break;
 		}
-	 }
+		case 2:{
+			//a
+			break;
+		}
+		case 3:{
+			
+		}
+          }
+         
 
-	/*
+
+	
 	if(proto.CMD)==4){
 	  MensajesRecibidos();
 	}
-	*/
+	
 
 	for (int i = 0; i < nbytes; i++)
 	{
