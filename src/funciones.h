@@ -46,7 +46,6 @@ void MensajesRecibidos();
 
 void EscribirArchivo(const char* arch,Protocolo proto);
 
-//detecta el pin del clock y ejecuta la función de callback
-void detectarEmisor(int pin);
+BYTE calcularNumeroDeUnos(BYTE byte)
 
 #endif

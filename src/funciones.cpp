@@ -194,3 +194,13 @@ void EscribirArchivo(const char* arch,Protocolo proto){
 	fprintf(texto,"%s\n",proto.DATA);
 	fclose(texto);
 }
+
+BYTE calcularNumeroDeUnos(BYTE byte)
+{
+    BYTE contador = 0;
+    for (int i = 0; i < 8; i++)
+    {
+        contador += (byte >> i) & 0x01;
+    }
+    return contador;
+}

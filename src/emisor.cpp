@@ -160,9 +160,7 @@ void cb(void)
 		else if (numero_bits_transmitidos == 9)
 		{
 			//      printf("\n");
-			numero_de_unos = (buffer_de_datos[numero_bytes_transmitidos] & 0x01) + ((buffer_de_datos[numero_bytes_transmitidos] & 0x02) >> 1) + ((buffer_de_datos[numero_bytes_transmitidos] & 0x04) >> 2) +
-							 ((buffer_de_datos[numero_bytes_transmitidos] & 0x08) >> 3) + ((buffer_de_datos[numero_bytes_transmitidos] & 0x10) >> 4) + ((buffer_de_datos[numero_bytes_transmitidos] & 0x20) >> 5) +
-							 ((buffer_de_datos[numero_bytes_transmitidos] & 0x40) >> 6) + ((buffer_de_datos[numero_bytes_transmitidos] & 0x80) >> 7);
+			numero_de_unos = calcularNumeroDeUnos(buffer_de_datos[numero_bytes_transmitidos]);
 			digitalWrite(TX_PIN, numero_de_unos % 2 == 0); // Bit de paridad
 		}
 		else
