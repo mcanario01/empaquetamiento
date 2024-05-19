@@ -39,7 +39,7 @@ BYTE buffer[LARGO_DATA + BYTES_EXTRAS];
 
 bool paridadError = 0;
 // Guarda el largo del mensaje (despreciado)
-volatile BYTE len = 10;
+volatile BYTE len = 0;
 Protocolo mensaje;
 bool estado;
 
@@ -75,7 +75,7 @@ int main()
 	
 	printf("Escuchando...\n");
 	mensaje.LNG = 10;
-	while (numero_de_bytes < 14)
+	while (numero_de_bytes < len + BYTES_EXTRAS)
 		delay(500);
 
 	if(fin_transmision){
@@ -144,7 +144,10 @@ void cb(void)
 	if (transmissionStarted)
 	{
 		processBit(signal);		  // Procesa el bit
-		mensaje.LNG = obtenerLNG(mensaje.Frames); // Obtiene el largo del mensaje
+		if(numero_de_bytes == 2)
+		{
+			len = mensaje.Frames[1] & 0x3F;
+		}
 	}
 	else if (signal == 0 && !transmissionStarted) // Detección del bit de comienzo
 	{
@@ -186,16 +189,4 @@ void processBit(bool signal)
 		transmissionStarted = false;
 	}
 	numero_de_bits++;
-}
-
-BYTE obtenerLNG(BYTE *_Frames)
-{
-	BYTE _aux;
-	if (numero_de_bytes == 2)
-	{
-		_aux = ((_Frames[numero_de_bytes - 2]) >> 7) & 0x01 | (_Frames[numero_de_bytes - 1]) & 0x1F;
-		printf("El largo del mensaje es: %d\n", _aux);
-		imprimirBits(_aux);
-		return _aux;
-	}
 }
