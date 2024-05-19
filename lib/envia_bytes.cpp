@@ -18,7 +18,7 @@ volatile int numero_bits_transmitidos = 0;							  // guarda el número de bits 
 volatile int numero_bytes_transmitidos = 0;						  // guarda el número de bytes transmitidos
 int largo_de_bytes = 10;						  // es el número de bytes a transmitir
 
-BYTE cadena[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; // guarda los bytes a transmitir
+BYTE cadena[10] = "Hola mundo!"; // guarda los bytes a transmitir
 
 int numero_de_unos = 0;							  // es el número de unos en el byte
 bool transmisionIniciada = false;				  // indica si la transmisión está activa

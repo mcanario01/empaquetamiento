@@ -7,7 +7,6 @@
 // MACROS
 #define DELAY_PIN 23
 #define RX_PIN 3
-#define LARGO_MENSAJE 68
 
 #define BYTE unsigned char
 
@@ -36,7 +35,7 @@ bool paridad = 0;
 // Guarda la cantidad de unos en un byte
 int cantidad_de_unos = 0;
 // Guarda los bytes recibidos (despreciado)
-BYTE bytes[LARGO_MENSAJE];
+BYTE buffer[LARGO_DATA + BYTES_EXTRAS];
 
 bool paridadError = 0;
 // Guarda el largo del mensaje (despreciado)
@@ -48,10 +47,12 @@ volatile bool fin_transmision = false;
 
 volatile int contador_de_reposo = 0;
 
+/*
 FILE * mensajes=fopen("mensajes.txt","a");
 FILE * errores=fopen("errores.txt","a");
 fclose(mensajes);
 fclose(errores);
+*/
 
 int main()
 {
@@ -74,7 +75,7 @@ int main()
 	
 	printf("Escuchando...\n");
 	mensaje.LNG = 10;
-	while (numero_de_bytes < mensaje.LNG + 4)
+	while (numero_de_bytes < 14)
 		delay(500);
 
 	if(fin_transmision){

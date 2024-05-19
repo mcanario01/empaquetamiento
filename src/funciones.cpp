@@ -10,8 +10,8 @@ int empaquetar(Protocolo & proto)
     //Protocolo
     // CMD 7 bits / LNG 6 bits / DATA 63 bytes / FCS 10 bits
 
-        proto.Frames[0] = (proto.CMD & 0x7F) | ((proto.LNG & 0x01) << 7); // guardar CMD(7) y LSB de LNG(1) en Frames[0]
-        proto.Frames[1] = ((proto.LNG >> 1) & 0x1F); // guardar los 5 bits siguientes y el siguiente bit de LNG en Frames[1]
+    proto.Frames[0] = (proto.CMD & 0x7F); // guardar los 7 bits de CMD en Frames[0]
+    proto.Frames[1] = (proto.LNG& 0x3F); // guardar los 6 bits de LNG en Frames[1]
     
     if(proto.LNG > 0) // si quedan datos por enviar, se encapsulan
     {
@@ -29,7 +29,7 @@ int empaquetar(Protocolo & proto)
 	printf("Empaquetando mensaje...\n");
     
 
-	printf("Su mensaje es %s,\n de largo %d\n\n", proto.DATA, proto.LNG);
+	printf("Su mensaje es %s, de largo %d\n\n", proto.DATA, proto.LNG);
 
 	imprimirBytes(proto.Frames, proto.LNG + 4);
 
@@ -52,8 +52,8 @@ unsigned int fcs(BYTE *arr, int size)
 
 bool desempaquetar(Protocolo & proto)
 {
-	proto.CMD = proto.Frames[0] & 0x7F;									  // 7 bits cargados, sobran 1 bit
-	proto.LNG = (proto.Frames[0] >> 7) & 0x01 | (proto.Frames[1] & 0x1F); // 1 bit restante cargado mas 5 bits, sobran 2 bits de relleno
+	proto.CMD = proto.Frames[0] & 0x7F;		// 7 bits de comando
+	proto.LNG = (proto.Frames[1] & 0x3F); // 6 bits de largo
 
 	for (size_t i = 0; i < proto.LNG; i++)
 	{

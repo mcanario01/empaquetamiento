@@ -152,12 +152,12 @@ void cb(void)
 		{							 // si el numero de bits es 0
 			digitalWrite(TX_PIN, 0); // Bit de inicio
 		}
-		else if (numero_bits_transmitidos < (mensaje.LNG + BYTES_EXTRAS) - 1)
+		else if (numero_bits_transmitidos < 9)
 		{
 			digitalWrite(TX_PIN, (buffer_de_datos[numero_bytes_transmitidos] >> (numero_bits_transmitidos - 1)) & 0x01); // Bit de dato
 																														// printf("%d",(buffer_de_datos[numero_bytes_transmitidos]>>(numero_bits_transmitidos-1))&0x01);
 		}
-		else if (numero_bits_transmitidos == mensaje.LNG + BYTES_EXTRAS - 1)
+		else if (numero_bits_transmitidos == 9)
 		{
 			//      printf("\n");
 			numero_de_unos = (buffer_de_datos[numero_bytes_transmitidos] & 0x01) + ((buffer_de_datos[numero_bytes_transmitidos] & 0x02) >> 1) + ((buffer_de_datos[numero_bytes_transmitidos] & 0x04) >> 2) +
