@@ -44,8 +44,19 @@ void EncontrarArchivo(Protocolo mensaje);
 // Lee el archivo entregado y devuelve el numero de mensajes enviados
 void MensajesRecibidos();
 
+// Escribe un archivo con el mensaje recibido.
 void EscribirArchivo(const char* arch,Protocolo proto);
 
-BYTE calcularNumeroDeUnos(BYTE byte)
+// Calcula el número de unos en un byte.
+BYTE calcularNumeroDeUnos(BYTE byte);
+
+// Calcula el número de unos en un arreglo de bytes.
+BYTE calcularNumeroDeUnos(BYTE *arr);
+
+// Limpia el mensaje recibido.
+void limpiarMensaje(Protocolo &mensaje);
+
+// Limpia el buffer entregado.
+void limpiarBuffer(BYTE *buffer);
 
 #endif

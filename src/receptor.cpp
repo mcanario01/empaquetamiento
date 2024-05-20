@@ -14,8 +14,8 @@
 // Procesa un bit recibido
 void processBit(bool signal);
 
-// Obtiene el largo del mensaje
-BYTE obtenerLNG(BYTE *_Frames);
+// Inicializa la transmisión, reestableciendo las variables globales.
+void inicializarTransmision();
 
 // FUNCIÓN DE CALLBACK
 // Se encarga de leer el nivel del pin RX y procesar el bit
@@ -34,25 +34,18 @@ bool transmissionStarted = false;
 bool paridad = 0;
 // Guarda la cantidad de unos en un byte
 int cantidad_de_unos = 0;
-// Guarda los bytes recibidos (despreciado)
-BYTE buffer[LARGO_DATA + BYTES_EXTRAS];
-
+// Guarda si hay un error de paridad
 bool paridadError = 0;
 // Guarda el largo del mensaje (despreciado)
 volatile BYTE len = 0;
 Protocolo mensaje;
 bool estado;
 
+// Indica si la transmisión ha finalizado
 volatile bool fin_transmision = false;
 
+// Guarda la cantidad de bits en reposo
 volatile int contador_de_reposo = 0;
-
-/*
-FILE * mensajes=fopen("mensajes.txt","a");
-FILE * errores=fopen("errores.txt","a");
-fclose(mensajes);
-fclose(errores);
-*/
 
 int main()
 {
@@ -72,68 +65,57 @@ int main()
 		printf("Imposible iniciar la interrupción\n");
 	}
 
-	
-	printf("Escuchando...\n");
-	mensaje.LNG = 10;
-	while (numero_de_bytes < len + BYTES_EXTRAS)
-		delay(500);
+	while(1)
+	{
+		
+		inicializarTransmision();
+		printf("Escuchando...\n");
 
-	if(fin_transmision){
-		//leer lng
-	estado = desempaquetar(mensaje);}
-	switch (mensaje.CMD)
-	{
-	case 1:
-	{
-		leerMensaje(mensaje, estado);
-		imprimirCampos(mensaje);
-		break;
-	}
-	case 2:
-	{
-		// a
-		break;
-	}
-	case 3:
-	{
-		EncontrarArchivo(mensaje);
-		break;
-	}
-	case 4:
-	{
-		MensajesRecibidos();
-		break;
-	}
-	case 5:
-	{
-		printf("Apagando...\n");
-		return 0;
-	}
-	default:
-	{
-		printf("Ha ocurrido un error, intente nuevamente\n");
-	}
-	}
+		while ((numero_de_bytes < len + BYTES_EXTRAS)&& !fin_transmision)
+		{
+			delay(100);
+		}
 
-	// if (mensaje.CMD==2){
-	//  return 0;}
+		estado = desempaquetar(mensaje);
 
-	/*
-	if(mensaje.CMD)==4){
-	  MensajesRecibidos();
+		switch (mensaje.CMD)
+		{
+		case 1:
+		{
+			leerMensaje(mensaje, estado);
+			imprimirCampos(mensaje);
+			imprimirBytes(mensaje.Frames, mensaje.LNG + BYTES_EXTRAS);
+			break;
+		}
+		case 2:
+		{
+			// a
+			break;
+		}
+		case 3:
+		{
+			EncontrarArchivo(mensaje);
+			break;
+		}
+		case 4:
+		{
+			MensajesRecibidos();
+			break;
+		}
+		case 5:
+		{
+			printf("Apagando...\n");
+			system("read -s -n 1 -p \"Press any key to continue . . .\"");
+ 			system("echo \"\"");
+			return 0;
+		}
+		default:
+		{
+			printf("Ha ocurrido un error, intente nuevamente\n");
+		}
+		}
+
 	}
-	*/
-
-	for (int i = 0; i < numero_de_bytes; i++)
-	{
-		printf("Byte %d: %d\n", i, mensaje.Frames[i]);
-	}
-	printf("Errores: %d\n", errors);
-	// printf("Nbits: %d. Errors: %d\n", numero_de_bits, errors);
-
-	imprimirBytes(mensaje.Frames, numero_de_bytes);
-
-	return 0;
 }
 
 void cb(void)
@@ -157,7 +139,7 @@ void cb(void)
 	else
 	{
 		contador_de_reposo++;
-		if (contador_de_reposo > 4)
+		if (contador_de_reposo > 8 && numero_de_bytes > 4)
 		{
 			printf("Reposo de final de transmisión...\n");
 			fin_transmision = true;
@@ -187,6 +169,19 @@ void processBit(bool signal)
 		}
 		numero_de_bytes++;
 		transmissionStarted = false;
+		imprimirBits(mensaje.Frames[numero_de_bytes - 1]);
 	}
 	numero_de_bits++;
+}
+
+void inicializarTransmision()
+{
+	fin_transmision = false;
+	numero_de_bytes = 0;
+	len = 0;
+	limpiarMensaje(mensaje);
+	transmissionStarted = false;
+	paridad = 0;
+	cantidad_de_unos = 0;
+	paridadError = 0;
 }

@@ -204,3 +204,31 @@ BYTE calcularNumeroDeUnos(BYTE byte)
     }
     return contador;
 }
+
+BYTE calcularNumeroDeUnos(BYTE *arr)
+{
+    BYTE contador = 0;
+    for (int i = 0; i < sizeof(arr); i++)
+    {
+        for (size_t j = 0; j < 8; j++)
+        {
+            contador += (arr[i] >> j) & 0x01;
+        }
+        
+    }
+    return contador;
+}
+
+void limpiarMensaje(Protocolo &mensaje)
+{
+	memset(mensaje.DATA, 0, sizeof(mensaje.DATA));
+	memset(mensaje.FCS, 0, sizeof(mensaje.FCS));
+	memset(mensaje.Frames, 0, sizeof(mensaje.Frames));
+	mensaje.CMD = 0;
+	mensaje.LNG = 0;
+}
+
+void limpiarBuffer(BYTE *buffer)
+{
+    memset(buffer, 0, sizeof(buffer));
+}

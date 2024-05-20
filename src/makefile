@@ -1,3 +1,5 @@
+MAKEFLAGS += --silent
+
 ifeq ($(OS),Windows_NT)
 	uname_S := Windows
 else
@@ -22,7 +24,7 @@ run-emisor:
 run-receptor:
 	./receptor.exe
 
-clear:
+clear-all:
 	del *.o
 	del *.exe
 
@@ -30,36 +32,67 @@ endif
 
 ifeq ($(uname_S), Linux)
 all:
+	clear
+	echo "\nCompilando librerias...\n"
 	g++ -c funciones.cpp -lwiringPi
+	echo "\nCompilando emisor...\n"
 	g++ -c emisor.cpp -lwiringPi
+	echo "\nCompilando receptor...\n"
 	g++ -c receptor.cpp -lwiringPi
+	echo "\nUniendo archivos...\n"
 	g++ -o emisor emisor.o funciones.o -lwiringPi
 	g++ -o receptor receptor.o funciones.o -lwiringPi
+	echo "\nCompilando delay...\n"
 	g++ -o delay delay.cpp -lwiringPi
+	echo "\nBorrando archivos temporales...\n"
+	clear
 	rm -rf *.o
 
 run-emisor:
+	clear
+	echo "\nCompilando libreria...\n"
 	g++ -c funciones.cpp -lwiringPi
+	echo "\nCompilando emisor...\n"
 	g++ -c emisor.cpp -lwiringPi
+	echo "\nUniendo archivos...\n"
 	g++ -o emisor emisor.o funciones.o -lwiringPi
+	echo "\nBorrando archivos temporales...\n"
 	rm -rf *.o
+	echo "\nEjecutando emisor...\n"
+	clear
 	sudo ./emisor
 
 run-receptor:
+	clear
+	echo "\nCompilando libreria...\n"
 	g++ -c funciones.cpp -lwiringPi
+	echo "\nCompilando receptor...\n"
 	g++ -c receptor.cpp -lwiringPi
+	echo "\nUniendo archivos...\n"
 	g++ -o receptor receptor.o funciones.o -lwiringPi
+	echo "\nBorrando archivos temporales...\n"
 	rm -rf *.o
+	echo "\nEjecutando receptor...\n"
+	clear
 	sudo ./receptor
 
 run-delay:
+	clear
+	echo "\nCompilando delay...\n"
 	g++ -o delay delay.cpp -lwiringPi
+	echo "\nBorrando archivos temporales...\n"
 	rm -rf *.o
+	echo "\nEjecutando delay...\n"
+	clear
 	sudo ./delay
 
-clear:
+clear-all:
+	clear
+	echo "\nBorrando archivos temporales y ejecutables...\n"
 	rm -rf *.o
 	rm ./emisor
 	rm ./receptor
+	clear
 
 endif
+.PHONY: all
