@@ -1,0 +1,12 @@
+# Ignorar todo
+*
+
+# Excepto la carpeta src
+!src/
+
+# Excepto los archivos LICENSE y README.md
+!LICENSE
+!README.md
+
+# Ignorar todos los ejecutables de los subdirectorios
+**/executable
