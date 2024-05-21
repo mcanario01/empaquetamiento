@@ -68,7 +68,7 @@ int main()
 	while(1)
 	{
 		printf("MENU PRINCIPAL\n");
-		printf("Seleccione una opcion\n[1]Enviar mensaje de texto\n[2]Enviar 10 mensajes de prueba.\n[3]Guardar frase en archivo en receptor.\n[4]Imprimir archivo en receptor\n[5]Imprimir resumen de mensajes en receptor\n[6]Cerrar el receptor\n[7]Salir del programa\n");
+		printf("Seleccione una opcion\n[1]Enviar mensaje de texto\n[2]Enviar 10 mensajes de prueba.\n[3]Guardar frase en archivo en receptor.\n[4]Imprimir archivo en receptor\n[5]Cambiar archivo de destino.\n[6]Imprimir resumen de mensajes en receptor\n[7]Cerrar el receptor\n[8]Salir del programa\n");
 		int opcion;
 		scanf("%d", &opcion);
 		getchar();
@@ -82,7 +82,6 @@ int main()
 				obtenerInformacion(mensaje); // Se solicita al usuario el mensaje a enviar
 				empaquetar(mensaje);		 // Se empaqueta el mensaje
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
-				imprimirCampos(mensaje); // Se imprime el mensaje
 
 				printf("Iniciando transmisión...\n");
 				iniciarTransmision();		// inicia la transmisión
@@ -109,7 +108,6 @@ int main()
 				obtenerInformacion(mensaje);
 				empaquetar(mensaje);
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
-				imprimirCampos(mensaje); // Se imprime el mensaje
 
 				printf("Enviando mensaje de prueba 10 veces...\n");
 				for (int i = 0; i < 10; i++) // Se envía el mensaje de prueba la cantidad de veces solicitada
@@ -129,7 +127,6 @@ int main()
 				obtenerInformacion(mensaje); // Se solicita al usuario el mensaje a enviar
 				empaquetar(mensaje);		 // Se empaqueta el mensaje
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
-				imprimirCampos(mensaje); // Se imprime el mensaje
 
 				printf("Iniciando transmisión...\n");
 				iniciarTransmision();		// inicia la transmisión
@@ -154,7 +151,6 @@ int main()
 				obtenerInformacion(mensaje); // Se solicita al usuario el mensaje a enviar
 				empaquetar(mensaje);		 // Se empaqueta el mensaje
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
-				imprimirCampos(mensaje); // Se imprime el mensaje
 
 				printf("Iniciando transmisión...\n");
 				iniciarTransmision();		// inicia la transmisión
@@ -174,6 +170,40 @@ int main()
 				contar los de prueba).
 				*/
 				mensaje.CMD = opcion;
+				obtenerInformacion(mensaje); // Se solicita al usuario el mensaje a enviar
+				empaquetar(mensaje);		 // Se empaqueta el mensaje
+				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
+
+				printf("Iniciando transmisión...\n");
+				iniciarTransmision();		// inicia la transmisión
+				//bool valor_pin_aux = 0;
+				while(transmisionIniciada)
+				{
+					delay(100);
+				}
+				// Enviar mensaje de texto y ser guardado en un archivo mensajes.txt
+				break;
+			}
+			case 6:
+			{
+				mensaje.CMD = opcion;
+				obtenerInformacion(mensaje); // Se solicita al usuario el mensaje a enviar
+				empaquetar(mensaje);		 // Se empaqueta el mensaje
+				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
+
+				printf("Iniciando transmisión...\n");
+				iniciarTransmision();		// inicia la transmisión
+				//bool valor_pin_aux = 0;
+				while(transmisionIniciada)
+				{
+					delay(100);
+				}
+				// Enviar mensaje de texto y ser guardado en un archivo mensajes.txt
+				break;
+			}
+			case 7:
+			{
+				mensaje.CMD = opcion;
 				empaquetar(mensaje);
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
 				iniciarTransmision();		// inicia la transmisión
@@ -183,7 +213,7 @@ int main()
 				}
 				break;
 			}
-			case 6:
+			case 8:
 			{
 				// Cerrar el programa del receptor
 				mensaje.CMD = opcion;
@@ -197,7 +227,7 @@ int main()
 				break;
 			}
 
-			case 7:
+			case 9:
 				return 0;
 				break;
 			default:

@@ -83,16 +83,14 @@ void obtenerInformacion(Protocolo &proto)
     memcpy(proto.Frames, proto.Frames, proto.LNG + 4);
 }
 
-bool leerMensaje(Protocolo proto,bool estado)
+void leerMensaje(Protocolo proto, bool estado)
 {										  // ejecuta desempaquetar en el proto dado
 	printf("Se recibio un mensaje con estado: %s\n", estado ? "Correcto" : "Incorrecto"); // imprime por pantalla si el mensaje es correcto
+    printf("El comando es: %d\n", proto.CMD);
 	printf("El largo del mensaje es: %d\n", proto.LNG);
 	printf("El mensaje es: %s\n", proto.DATA);
-	if(estado==true){
-		EscribirArchivo("mensajes",proto);}
-	else{
-		EscribirArchivo("errores",proto);}
-	return estado;
+    printf("El FCS es: %d\n", proto.FCS[0] << 8 | proto.FCS[1]);
+    
 }
 
 void imprimirBits(BYTE byte)
@@ -160,7 +158,7 @@ void BuscarArchivo(Protocolo &proto)
 void EncontrarArchivo(Protocolo mensaje){
     char linea[LARGO_DATA];
     strcat((char*)mensaje.DATA,".txt");
-    FILE * archivo= fopen((char*)mensaje.DATA,"r");
+    FILE * archivo = fopen((char*)mensaje.DATA,"r");
     if(archivo != NULL){
         while (fgets(linea, sizeof(linea), archivo) != NULL) {
             printf("%s", linea);
@@ -241,4 +239,10 @@ void limpiarMensaje(Protocolo &mensaje)
 void limpiarBuffer(BYTE *buffer)
 {
     memset(buffer, 0, sizeof(buffer));
+}
+
+void listarArchivosDeTexto()
+{
+    system("ls *.txt");
+    return;
 }

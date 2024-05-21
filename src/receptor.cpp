@@ -2,6 +2,7 @@
 #include <wiringPi.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <cstring>
 #include "funciones.h"
 
 // MACROS
@@ -53,6 +54,8 @@ int contador_de_mensajes_de_prueba_correctos = 0;
 int contador_de_mensajes_recibidos = 0;
 int contador_de_mensajes_recibidos_correctos = 0;
 
+char nombre_archivo[LARGO_DATA] = "mensajes";
+
 int main()
 {
 	system("clear");
@@ -88,26 +91,27 @@ int main()
 		estado = desempaquetar(mensaje);
 		if(estado)
 		{
-			contador_de_mensajes_recibidos++;
-			contador_de_mensajes_recibidos_correctos++;
+			contador_de_mensajes_recibidos++; // Se incrementa el contador de mensajes recibidos
+			contador_de_mensajes_recibidos_correctos++; // Se incrementa el contador de mensajes recibidos correctamente
 		}
 		else
 		{
-			contador_de_mensajes_recibidos++;
+			contador_de_mensajes_recibidos++; // Se incrementa el contador de mensajes recibidos
+			EscribirArchivo("errores", mensaje); // Guarda el mensaje con error en un archivo
 		}
 
 		switch (mensaje.CMD)
 		{
 		case 1:
 		{
+			// Imprime el mensaje recibido por consola
 			imprimirCampos(mensaje);
-			printf("Largo del mensaje: %d\n", mensaje.LNG);
-			imprimirBytes(mensaje.Frames, mensaje.LNG + BYTES_EXTRAS);
 			leerMensaje(mensaje, estado);
 			break;
 		}
 		case 2:
 		{
+			// Recibe 10 mensajes de prueba y calcula el porcentaje de error
 			printf("Mensaje de prueba recibido\n");
 			leerMensaje(mensaje, estado);
 			contador_de_mensajes_de_prueba++;
@@ -135,11 +139,9 @@ int main()
 		{
 			// Mediante un comando se debe enviar un mensaje de texto y ser guardado en un archivo mensajes.txt
 			imprimirCampos(mensaje);
-			printf("Largo del mensaje: %d\n", mensaje.LNG);
-			imprimirBytes(mensaje.Frames, mensaje.LNG + BYTES_EXTRAS);
 			leerMensaje(mensaje, estado);
-			printf("Escribiendo mensaje en archivo...\n");
-			EscribirArchivo("mensaje", mensaje);
+			printf("Escribiendo mensaje en archivo %s.txt ...\n", nombre_archivo);
+			EscribirArchivo(nombre_archivo, mensaje);
 			break;
 		}
 		case 4:
@@ -149,14 +151,19 @@ int main()
 			// consola en caso de que este exista, en caso contrario el receptor debe mostrar por consola
 			// que el archivo no existe.
 			imprimirCampos(mensaje);
-			printf("Largo del mensaje: %d\n", mensaje.LNG);
-			imprimirBytes(mensaje.Frames, mensaje.LNG + BYTES_EXTRAS);
 			leerMensaje(mensaje, estado);
 			printf("Buscando archivo...\n");
 			EncontrarArchivo(mensaje);
 			break;
 		}
 		case 5:
+		{
+			imprimirCampos(mensaje);
+			leerMensaje(mensaje, estado);
+			printf("Cambiando archivo destino a: %s.txt ...\n", mensaje.DATA);
+			memcpy(nombre_archivo, mensaje.DATA, mensaje.LNG);
+		}
+		case 6:
 		{
 			// Mediante un comando el receptor debe imprimir por pantalla el contador de los mensajes
 			// recibidos junto con las estadísticas de los mensajes recibidos correctamente y con error (sin
@@ -167,7 +174,14 @@ int main()
 			printf("Contador de mensajes recibidos incorrectamente: %d\n", contador_de_mensajes_recibidos - contador_de_mensajes_recibidos_correctos);
 			break;
 		}
-		case 6:
+		case 7:
+		{
+			// Lista todos los archivos .txt en la carpeta del receptor.
+			printf("Listando archivos de texto...\n");
+			listarArchivosDeTexto();
+			break;
+		}
+		case 8:
 		{
 			printf("Apagando...\n");
 			return 0;

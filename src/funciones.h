@@ -18,7 +18,7 @@ unsigned int fcs(BYTE *arr, int size);
 void obtenerInformacion(Protocolo &proto);
 
 // recibe un mensaje e imprime por pantalla sus datos.
-bool leerMensaje(Protocolo proto,bool estado);
+void leerMensaje(Protocolo proto, bool estado);
 
 // Imprime por pantalla los bits de un byte.
 void imprimirBits(BYTE byte);
@@ -58,5 +58,8 @@ void limpiarMensaje(Protocolo &mensaje);
 
 // Limpia el buffer entregado.
 void limpiarBuffer(BYTE *buffer);
+
+// Lista todos los archivos .txt en la carpeta del receptor.
+void listarArchivosDeTexto();
 
 #endif
