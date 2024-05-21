@@ -184,12 +184,14 @@ void MensajesRecibidos(){
 void EscribirArchivo(const char* arch,Protocolo proto){
 	char nombreArch[LARGO_DATA];
 	strcpy(nombreArch, arch);
-        strcat(nombreArch,".txt");
+    strcat(nombreArch,".txt");
 	char linea[LARGO_DATA];
 	int posicion=0;
 	FILE * texto=fopen(nombreArch,"a+");
-    	while (fgets(linea, sizeof(linea), texto) != NULL) {
-        posicion++;} 
+    while (fgets(linea, sizeof(linea), texto) != NULL) 
+    {
+        posicion++;
+    } 
 	fprintf(texto,"%s\n",proto.DATA);
 	fclose(texto);
 }

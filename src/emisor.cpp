@@ -68,23 +68,23 @@ int main()
 	while(1)
 	{
 		printf("MENU PRINCIPAL\n");
-		printf("Seleccione una opcion\n[1]Enviar mensaje de texto\n[2]Enviar mensaje de prueba\n[3]Mostrar contenido\n[4]Contador de mensajes\n[5]Cerrar el receptor\n[6]Salir del programa\n");
+		printf("Seleccione una opcion\n[1]Enviar mensaje de texto\n[2]Enviar 10 mensajes de prueba.\n[3]Guardar frase en archivo en receptor.\n[4]Imprimir archivo en receptor\n[5]Imprimir resumen de mensajes en receptor\n[6]Cerrar el receptor\n[7]Salir del programa\n");
 		int opcion;
 		scanf("%d", &opcion);
 		getchar();
+		limpiarMensaje(mensaje); // Se limpia el mensaje
+		limpiarBuffer(buffer_de_datos); // Se limpia el buffer de datos
 		switch (opcion)
 			{
 			case 1: // Enviar mensaje de texto
 			{
-
-				limpiarMensaje(mensaje); // Se limpia el mensaje
-				limpiarBuffer(buffer_de_datos); // Se limpia el buffer de datos
 				mensaje.CMD = opcion;
 				obtenerInformacion(mensaje); // Se solicita al usuario el mensaje a enviar
 				empaquetar(mensaje);		 // Se empaqueta el mensaje
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
 				imprimirCampos(mensaje); // Se imprime el mensaje
 
+				printf("Iniciando transmisión...\n");
 				iniciarTransmision();		// inicia la transmisión
 				//bool valor_pin_aux = 0;
 				while(transmisionIniciada)
@@ -96,53 +96,106 @@ int main()
 			}
 			case 2:
 			{
-				// Enviar mensaje de prueba varias veces y el receptor debe contar los enviados correctamente, con error y con error no detectado, además de calcular los procentajes
-				// de acierto y error y mostrarlo por consola del receptor
-				printf("¿Cuántas veces desea enviar el mensaje de prueba?\n"); // Se solicita la cantidad de mensajes a enviar
-				int cantidad_mensajes;										   // Se guarda la cantidad de mensajes a enviar
-				scanf("%d", &cantidad_mensajes);							   // Se lee la cantidad de mensajes a enviar
-				int contador_aciertos = 0;									   // Se inicializa el contador de aciertos
-				Protocolo mensaje;											   // Se crea un mensaje de prueba
+				/*
+				Mediante un comando, enviar un mensaje de prueba. Este mensaje debe enviarse 10 veces, y
+				el receptor ir contando internamente:
+					- Losmensajesrecibidos correctamente.
+					- Losmensajesrecibidos con error detectado.
+					- Losmensajesrecibidos con error no detectado.
+				Mediante este comando el receptor debe calcular los porcentajes de acierto y error
+				asociados a los mensajes enviados, y mostrar éstos por la consola del receptor.
+				*/
 				mensaje.CMD = opcion;
 				obtenerInformacion(mensaje);
-				printf("Enviando mensaje de prueba %d veces...\n", cantidad_mensajes);
-				for (int i = 0; i < cantidad_mensajes; i++) // Se envía el mensaje de prueba la cantidad de veces solicitada
+				empaquetar(mensaje);
+				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
+				imprimirCampos(mensaje); // Se imprime el mensaje
+
+				printf("Enviando mensaje de prueba 10 veces...\n");
+				for (int i = 0; i < 10; i++) // Se envía el mensaje de prueba la cantidad de veces solicitada
 				{
-					Protocolo mensaje2;
-					memcpy(mensaje2.Frames, mensaje.Frames, sizeof(mensaje.Frames) + 1);
-					//contador_aciertos += leerMensaje(mensaje2);
+					iniciarTransmision();		// inicia la transmisión
+					while(transmisionIniciada)
+					{
+						delay(100);
+					}
 				}
-				float porcentaje_aciertos = (contador_aciertos / cantidad_mensajes) * 100;
 				break;
 			}
 			case 3:
 			{
+				// Mediante un comando se debe enviar un mensaje de texto y ser guardado en un archivo mensajes.txt
 				mensaje.CMD = opcion;
-				BuscarArchivo(mensaje);
-				empaquetar(mensaje);
+				obtenerInformacion(mensaje); // Se solicita al usuario el mensaje a enviar
+				empaquetar(mensaje);		 // Se empaqueta el mensaje
+				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
+				imprimirCampos(mensaje); // Se imprime el mensaje
+
+				printf("Iniciando transmisión...\n");
+				iniciarTransmision();		// inicia la transmisión
+				//bool valor_pin_aux = 0;
+				while(transmisionIniciada)
+				{
+					delay(100);
+				}
+				// Enviar mensaje de texto y ser guardado en un archivo mensajes.txt
 				break;
 			}
 
 			case 4:
 			{
+				/*
+				Mediante un comando se debe enviar un mensaje con el nombre de un archivo de texto de
+				prueba en el receptor, con dicho comando, el receptor debe mostrar el contenido del archivo
+				consola en caso de que este exista, en caso contrario el receptor debe mostrar por consola
+				que el archivo no existe.
+				*/
 				mensaje.CMD = opcion;
+				obtenerInformacion(mensaje); // Se solicita al usuario el mensaje a enviar
+				empaquetar(mensaje);		 // Se empaqueta el mensaje
+				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
+				imprimirCampos(mensaje); // Se imprime el mensaje
+
+				printf("Iniciando transmisión...\n");
+				iniciarTransmision();		// inicia la transmisión
+				//bool valor_pin_aux = 0;
+				while(transmisionIniciada)
+				{
+					delay(100);
+				}
+				// Enviar mensaje de texto y ser guardado en un archivo mensajes.txt
 				break;
 			}
 			case 5:
+			{
+				/*
+				Mediante un comando el receptor debe imprimir por pantalla el contador de los mensajes
+				recibidos junto con las estadísticas de los mensajes recibidos correctamente y con error (sin
+				contar los de prueba).
+				*/
+				mensaje.CMD = opcion;
+				empaquetar(mensaje);
+				iniciarTransmision();		// inicia la transmisión
+				while(transmisionIniciada)
+				{
+					delay(100);
+				}
+				break;
+			}
+			case 6:
 			{
 				// Cerrar el programa del receptor
 				mensaje.CMD = opcion;
 				empaquetar(mensaje);
 				iniciarTransmision();		// inicia la transmisión
-				//bool valor_pin_aux = 0;
 				while(transmisionIniciada)
 				{
-					delay(500);
+					delay(100);
 				}
 				break;
 			}
 
-			case 6:
+			case 7:
 				return 0;
 				break;
 			default:

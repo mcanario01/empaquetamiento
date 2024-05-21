@@ -47,6 +47,12 @@ volatile bool transmision_iniciada = false;
 // Guarda la cantidad de bits en reposo
 volatile int contador_bits_reposo = 0;
 
+int contador_de_mensajes_de_prueba = 0;
+int contador_de_mensajes_de_prueba_correctos = 0;
+
+int contador_de_mensajes_recibidos = 0;
+int contador_de_mensajes_recibidos_correctos = 0;
+
 int main()
 {
 	system("clear");
@@ -80,6 +86,15 @@ int main()
 		printf("Mensaje recibido...\n");
 		printf("Procesando mensaje...\n");
 		estado = desempaquetar(mensaje);
+		if(estado)
+		{
+			contador_de_mensajes_recibidos++;
+			contador_de_mensajes_recibidos_correctos++;
+		}
+		else
+		{
+			contador_de_mensajes_recibidos++;
+		}
 
 		switch (mensaje.CMD)
 		{
@@ -93,20 +108,66 @@ int main()
 		}
 		case 2:
 		{
-			// a
+			printf("Mensaje de prueba recibido\n");
+			leerMensaje(mensaje, estado);
+			contador_de_mensajes_de_prueba++;
+			contador_de_mensajes_de_prueba_correctos += estado;
+			if(contador_de_mensajes_de_prueba == 10)
+			{
+				if(contador_de_mensajes_de_prueba == contador_de_mensajes_de_prueba_correctos)
+				{
+					printf("Los diez mensajes de prueba han sido recibidos correctamente\n");
+					printf("Porcentaje de error: %f \%\n", (float)contador_de_mensajes_de_prueba_correctos / contador_de_mensajes_de_prueba * 100);
+					printf("Se recibieron correctamente %d mensajes de prueba\n", contador_de_mensajes_de_prueba_correctos);
+					printf("Se recibieron incorrectamente %d mensajes de prueba\n", contador_de_mensajes_de_prueba - contador_de_mensajes_de_prueba_correctos);
+				}
+				else
+				{
+					printf("Ha ocurrido un error en la recepción de mensajes de prueba\n");
+					printf("Porcentaje de error: %f \%\n", (float)contador_de_mensajes_de_prueba_correctos / contador_de_mensajes_de_prueba * 100);
+					printf("Se recibieron correctamente %d mensajes de prueba\n", contador_de_mensajes_de_prueba_correctos);
+					printf("Se recibieron incorrectamente %d mensajes de prueba\n", contador_de_mensajes_de_prueba - contador_de_mensajes_de_prueba_correctos);
+				}
+			}
 			break;
 		}
 		case 3:
 		{
-			EncontrarArchivo(mensaje);
+			// Mediante un comando se debe enviar un mensaje de texto y ser guardado en un archivo mensajes.txt
+			imprimirCampos(mensaje);
+			printf("Largo del mensaje: %d\n", mensaje.LNG);
+			imprimirBytes(mensaje.Frames, mensaje.LNG + BYTES_EXTRAS);
+			leerMensaje(mensaje, estado);
+			printf("Escribiendo mensaje en archivo...\n");
+			EscribirArchivo("mensaje", mensaje);
 			break;
 		}
 		case 4:
 		{
-			MensajesRecibidos();
+			// Mediante un comando se debe enviar un mensaje con el nombre de un archivo de texto de
+			// prueba en el receptor, con dicho comando, el receptor debe mostrar el contenido del archivo
+			// consola en caso de que este exista, en caso contrario el receptor debe mostrar por consola
+			// que el archivo no existe.
+			imprimirCampos(mensaje);
+			printf("Largo del mensaje: %d\n", mensaje.LNG);
+			imprimirBytes(mensaje.Frames, mensaje.LNG + BYTES_EXTRAS);
+			leerMensaje(mensaje, estado);
+			printf("Buscando archivo...\n");
+			EncontrarArchivo(mensaje);
 			break;
 		}
 		case 5:
+		{
+			// Mediante un comando el receptor debe imprimir por pantalla el contador de los mensajes
+			// recibidos junto con las estadísticas de los mensajes recibidos correctamente y con error (sin
+			// contar los de prueba).
+			printf("Resumen de mensajes:\n");
+			printf("Contador de mensajes recibidos: %d\n", contador_de_mensajes_recibidos);
+			printf("Contador de mensajes recibidos correctamente: %d\n", contador_de_mensajes_recibidos_correctos);
+			printf("Contador de mensajes recibidos incorrectamente: %d\n", contador_de_mensajes_recibidos - contador_de_mensajes_recibidos_correctos);
+			break;
+		}
+		case 6:
 		{
 			printf("Apagando...\n");
 			return 0;
