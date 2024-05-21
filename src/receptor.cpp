@@ -15,7 +15,7 @@
 void processBit(bool signal);
 
 // Inicializa la transmisión, reestableciendo las variables globales.
-void inicializarTransmision();
+void restablecerDatos();
 
 // FUNCIÓN DE CALLBACK
 // Se encarga de leer el nivel del pin RX y procesar el bit
@@ -29,7 +29,7 @@ volatile int numero_de_bits = 0;
 // Guarda la cantidad de bytes recibidos
 volatile int numero_de_bytes = 0;
 // Indica si la transmisión está activa
-bool transmissionStarted = false;
+bool envio_de_informacion = false;
 // Guarda el valor de la paridad
 bool paridad = 0;
 // Guarda la cantidad de unos en un byte
@@ -42,10 +42,10 @@ Protocolo mensaje;
 bool estado;
 
 // Indica si la transmisión ha finalizado
-volatile bool fin_transmision = false;
+volatile bool transmision_iniciada = false;
 
 // Guarda la cantidad de bits en reposo
-volatile int contador_de_reposo = 0;
+volatile int contador_bits_reposo = 0;
 
 int main()
 {
@@ -67,24 +67,28 @@ int main()
 
 	while(1)
 	{
-		
-		inicializarTransmision();
-		printf("Escuchando...\n");
+		printf("Restableciendo datos...\n");
+		restablecerDatos();
 
-		while ((numero_de_bytes < len + BYTES_EXTRAS)&& !fin_transmision)
+		// Espera a que se reciba un mensaje completo
+		printf("Esperando mensaje...\n");
+		printf("Numero de bytes: %d, Tamaño del mensaje: %d, Fin de transmisión: %d\n", numero_de_bytes, len, transmision_iniciada);
+		while ((numero_de_bytes < len + BYTES_EXTRAS))
 		{
 			delay(100);
 		}
-
+		printf("Mensaje recibido...\n");
+		printf("Procesando mensaje...\n");
 		estado = desempaquetar(mensaje);
 
 		switch (mensaje.CMD)
 		{
 		case 1:
 		{
-			leerMensaje(mensaje, estado);
 			imprimirCampos(mensaje);
+			printf("Largo del mensaje: %d\n", mensaje.LNG);
 			imprimirBytes(mensaje.Frames, mensaje.LNG + BYTES_EXTRAS);
+			leerMensaje(mensaje, estado);
 			break;
 		}
 		case 2:
@@ -105,8 +109,6 @@ int main()
 		case 5:
 		{
 			printf("Apagando...\n");
-			system("read -s -n 1 -p \"Press any key to continue . . .\"");
- 			system("echo \"\"");
 			return 0;
 		}
 		default:
@@ -123,29 +125,23 @@ void cb(void)
 
 	bool signal = digitalRead(RX_PIN); // Lee el nivel del pin RX
 	//  printf("%d",signal);
-	if (transmissionStarted)
+	if (envio_de_informacion)
 	{
 		processBit(signal);		  // Procesa el bit
 		if(numero_de_bytes == 2)
 		{
 			len = mensaje.Frames[1] & 0x3F;
+			printf("Largo del mensaje: %d\n", len);
 		}
 	}
-	else if (signal == 0 && !transmissionStarted) // Detección del bit de comienzo
+	else if(signal)
 	{
-		transmissionStarted = true; // Se inicia la transmisión
+		contador_bits_reposo++;
+	}
+	else // Detección del bit de comienzo
+	{
+		envio_de_informacion = true; // Se inicia la transmisión
 		numero_de_bits = 1;			// Se inicializa el contador de bits
-	}
-	else
-	{
-		contador_de_reposo++;
-		if (contador_de_reposo > 8 && numero_de_bytes > 4)
-		{
-			printf("Reposo de final de transmisión...\n");
-			fin_transmision = true;
-			transmissionStarted = false;
-			contador_de_reposo = 0;
-		}
 	}
 }
 
@@ -168,20 +164,22 @@ void processBit(bool signal)
 			paridadError = true;
 		}
 		numero_de_bytes++;
-		transmissionStarted = false;
-		imprimirBits(mensaje.Frames[numero_de_bytes - 1]);
+		envio_de_informacion = false;
 	}
 	numero_de_bits++;
 }
 
-void inicializarTransmision()
+void restablecerDatos()
 {
-	fin_transmision = false;
+	errors = 0;
+	numero_de_bits = 0;
 	numero_de_bytes = 0;
+	cantidad_de_unos = 0;
+	transmision_iniciada = false;
 	len = 0;
 	limpiarMensaje(mensaje);
-	transmissionStarted = false;
+	envio_de_informacion = false;
 	paridad = 0;
-	cantidad_de_unos = 0;
 	paridadError = 0;
+	contador_bits_reposo = 0;
 }

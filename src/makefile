@@ -33,30 +33,30 @@ endif
 ifeq ($(uname_S), Linux)
 all:
 	clear
-	echo "\nCompilando librerias...\n"
+	echo "\nCompilando librerias..."
 	g++ -c funciones.cpp -lwiringPi
-	echo "\nCompilando emisor...\n"
+	echo "\nCompilando emisor..."
 	g++ -c emisor.cpp -lwiringPi
-	echo "\nCompilando receptor...\n"
+	echo "\nCompilando receptor..."
 	g++ -c receptor.cpp -lwiringPi
-	echo "\nUniendo archivos...\n"
+	echo "\nUniendo archivos..."
 	g++ -o emisor emisor.o funciones.o -lwiringPi
 	g++ -o receptor receptor.o funciones.o -lwiringPi
-	echo "\nCompilando delay...\n"
+	echo "\nCompilando delay..."
 	g++ -o delay delay.cpp -lwiringPi
 	echo "\nBorrando archivos temporales...\n"
-	clear
 	rm -rf *.o
+	clear
 
 run-emisor:
 	clear
-	echo "\nCompilando libreria...\n"
+	echo "\nCompilando libreria..."
 	g++ -c funciones.cpp -lwiringPi
-	echo "\nCompilando emisor...\n"
+	echo "\nCompilando emisor..."
 	g++ -c emisor.cpp -lwiringPi
-	echo "\nUniendo archivos...\n"
+	echo "\nUniendo archivos..."
 	g++ -o emisor emisor.o funciones.o -lwiringPi
-	echo "\nBorrando archivos temporales...\n"
+	echo "\nBorrando archivos temporales..."
 	rm -rf *.o
 	echo "\nEjecutando emisor...\n"
 	clear
@@ -64,32 +64,33 @@ run-emisor:
 
 run-receptor:
 	clear
-	echo "\nCompilando libreria...\n"
+	echo "\nCompilando libreria..."
 	g++ -c funciones.cpp -lwiringPi
-	echo "\nCompilando receptor...\n"
+	echo "\nCompilando receptor..."
 	g++ -c receptor.cpp -lwiringPi
-	echo "\nUniendo archivos...\n"
+	echo "\nUniendo archivos..."
 	g++ -o receptor receptor.o funciones.o -lwiringPi
-	echo "\nBorrando archivos temporales...\n"
+	echo "\nBorrando archivos temporales..."
 	rm -rf *.o
-	echo "\nEjecutando receptor...\n"
+	echo "\nEjecutando receptor..."
 	clear
 	sudo ./receptor
 
 run-delay:
 	clear
-	echo "\nCompilando delay...\n"
+	echo "\nCompilando delay..."
 	g++ -o delay delay.cpp -lwiringPi
-	echo "\nBorrando archivos temporales...\n"
+	echo "\nBorrando archivos temporales..."
 	rm -rf *.o
-	echo "\nEjecutando delay...\n"
+	echo "\nEjecutando delay..."
 	clear
 	sudo ./delay
 
 clear-all:
 	clear
-	echo "\nBorrando archivos temporales y ejecutables...\n"
+	echo "\nBorrando archivos objeto...\n"
 	rm -rf *.o
+	echo "\nBorrando ejecutables...\n"
 	rm ./emisor
 	rm ./receptor
 	clear

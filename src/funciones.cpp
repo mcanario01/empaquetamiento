@@ -27,7 +27,6 @@ int empaquetar(Protocolo & proto)
     proto.Frames[proto.LNG + 3] = proto.FCS[1];
 
 	printf("Empaquetando mensaje...\n");
-    
 
 	printf("Su mensaje es %s, de largo %d\n\n", proto.DATA, proto.LNG);
 
@@ -221,11 +220,20 @@ BYTE calcularNumeroDeUnos(BYTE *arr)
 
 void limpiarMensaje(Protocolo &mensaje)
 {
-	memset(mensaje.DATA, 0, sizeof(mensaje.DATA));
-	memset(mensaje.FCS, 0, sizeof(mensaje.FCS));
-	memset(mensaje.Frames, 0, sizeof(mensaje.Frames));
-	mensaje.CMD = 0;
-	mensaje.LNG = 0;
+    mensaje.CMD = 0;
+    mensaje.LNG = 0;
+    for(size_t i = 0; i < sizeof(mensaje.DATA); i++)
+    {
+        mensaje.DATA[i] = 0;
+    }
+    for(size_t i = 0; i < sizeof(mensaje.Frames); i++)
+    {
+        mensaje.Frames[i] = 0;
+    }
+    for(size_t i = 0; i < sizeof(mensaje.FCS); i++)
+    {
+        mensaje.FCS[i] = 0;
+    }
 }
 
 void limpiarBuffer(BYTE *buffer)
