@@ -64,7 +64,7 @@ int main()
 	// CONFIGURA PINES DE ENTRADA SALIDA
 	pinMode(TX_PIN, OUTPUT);
 
-	system("clear");
+	system("clear"); // limpia la consola
 	while(1)
 	{
 		printf("MENU PRINCIPAL\n");
@@ -175,6 +175,7 @@ int main()
 				*/
 				mensaje.CMD = opcion;
 				empaquetar(mensaje);
+				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
 				iniciarTransmision();		// inicia la transmisión
 				while(transmisionIniciada)
 				{
@@ -187,6 +188,7 @@ int main()
 				// Cerrar el programa del receptor
 				mensaje.CMD = opcion;
 				empaquetar(mensaje);
+				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
 				iniciarTransmision();		// inicia la transmisión
 				while(transmisionIniciada)
 				{

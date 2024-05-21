@@ -124,7 +124,7 @@ int main()
 				else
 				{
 					printf("Ha ocurrido un error en la recepción de mensajes de prueba\n");
-					printf("Porcentaje de error: %f \%\n", (float)contador_de_mensajes_de_prueba_correctos / contador_de_mensajes_de_prueba * 100);
+					printf("Porcentaje de error: %g \%\n", (float)(contador_de_mensajes_de_prueba_correctos - contador_de_mensajes_de_prueba) / contador_de_mensajes_de_prueba * 100);
 					printf("Se recibieron correctamente %d mensajes de prueba\n", contador_de_mensajes_de_prueba_correctos);
 					printf("Se recibieron incorrectamente %d mensajes de prueba\n", contador_de_mensajes_de_prueba - contador_de_mensajes_de_prueba_correctos);
 				}
