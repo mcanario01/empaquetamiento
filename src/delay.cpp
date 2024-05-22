@@ -5,12 +5,6 @@
 #define PWM_PIN 1 // => 18 BCM
 #define PWM_RANGE 1024
 #define PWM_FREQUENCY 1
-//Frequency = 19.2 Mhz / clock_divisor / range
-//500 Hz = 19.2 MHz / 19.2 / 20
-//100 Hz = 19.2 MHz / 19.2 / 100
-//9.765625 Hz = 19.2 MHz / 19.2 / 1024
-
-
 
 int obtenerRange(int frequency);
 int obtenerDivisor(int frequency);
@@ -31,17 +25,43 @@ int main(){
   printf("PWM configurado a %d Hz\n", PWM_FREQUENCY);
   pwmWrite(PWM_PIN, PWM_RANGE/2);// 50% del ciclo
 
-  printf("Ejecutando reloj PWM...\n");
-  printf("Presiona Ctrl+C para salir\n");
+  system("clear");
   while(1){
-    delay(500);
+    //Menu
+    
+    printf("DELAY\n");
+    printf("1. Cambiar frecuencia\n");
+    printf("2. Salir\n");
+    printf("Opcion: ");
+    int opcion;
+    scanf("%d", &opcion);
+    getchar();
+    if(opcion == 1)
+    {
+      printf("Frecuencia: ");
+      int frequency;
+      scanf("%d", &frequency);
+      getchar();
+      pwmSetClock(obtenerDivisor(frequency));
+      printf("PWM configurado a %d Hz\n", frequency);
+    }
+    else if(opcion == 2)
+    {
+      break;
+    }
+    else
+    {
+      printf("Opcion no valida\n");
+    }
   }
 
   return 0;
 }
 
-
-
+// Funcion que obtiene el divisor del clock
+// usando la formula de la documentacion de wiringPi
+// que es clock = 19.2 MHz / clock_divisor / range
 int obtenerDivisor(int frequency){
-  return 19200000 / frequency / PWM_RANGE;
+  return 19200/frequency;
 }
+
