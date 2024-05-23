@@ -44,6 +44,8 @@ BYTE buffer_de_datos[CANTIDAD_DE_BYTES + BYTES_EXTRAS]; // buffer de datos
 volatile int numero_de_unos = 0;			  // es el número de unos en el byte
 bool transmisionIniciada = false; // indica si la transmisión está activa
 
+volatile int cantidad_de_mensajes_enviados = 0; // cantidad de mensajes enviados
+
 int main()
 {
 	if (wiringPiSetup() == -1)
@@ -67,8 +69,13 @@ int main()
 	system("clear"); // limpia la consola
 	while(1)
 	{
-		printf("MENU PRINCIPAL\n");
+		printf("MENU PRINCIPAL\n\n");
+		/*
+		El emisor debe poder mostrar un contador de mensajes enviados.
+		*/
+		printf("Cantidad de mensajes enviados: %d\n\n", cantidad_de_mensajes_enviados); // imprime la cantidad de mensajes enviados
 		printf("Seleccione una opcion\n[1]Enviar mensaje de texto\n[2]Enviar 10 mensajes de prueba.\n[3]Guardar frase en archivo en receptor.\n[4]Imprimir archivo en receptor\n[5]Cambiar archivo de destino.\n[6]Imprimir resumen de mensajes en receptor\n[7]Cerrar el receptor\n[8]Salir del programa\n");
+		printf("Opcion: ");
 		int opcion;
 		scanf("%d", &opcion);
 		getchar();
@@ -76,7 +83,7 @@ int main()
 		limpiarBuffer(buffer_de_datos); // Se limpia el buffer de datos
 		switch (opcion)
 			{
-			case 1: // Enviar mensaje de texto
+			case 1: // Enviar mensaje de texto, la rutina básica.
 			{
 				mensaje.CMD = opcion;
 				obtenerInformacion(mensaje); // Se solicita al usuario el mensaje a enviar
@@ -84,13 +91,13 @@ int main()
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
 
 				printf("Iniciando transmisión...\n");
+				printf("Enviando mensaje de texto...\n");
 				iniciarTransmision();		// inicia la transmisión
 				//bool valor_pin_aux = 0;
 				while(transmisionIniciada)
 				{
 					delay(100);
 				}
-				// Enviar mensaje de texto y ser guardado en un archivo mensajes.txt
 				break;
 			}
 			case 2:
@@ -98,9 +105,9 @@ int main()
 				/*
 				Mediante un comando, enviar un mensaje de prueba. Este mensaje debe enviarse 10 veces, y
 				el receptor ir contando internamente:
-					- Losmensajesrecibidos correctamente.
-					- Losmensajesrecibidos con error detectado.
-					- Losmensajesrecibidos con error no detectado.
+					- Los mensajes recibidos correctamente.
+					- Los mensajes recibidos con error detectado.
+					- Los mensajes recibidos con error no detectado.
 				Mediante este comando el receptor debe calcular los porcentajes de acierto y error
 				asociados a los mensajes enviados, y mostrar éstos por la consola del receptor.
 				*/
@@ -109,6 +116,7 @@ int main()
 				empaquetar(mensaje);
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
 
+				printf("Iniciando transmisión...\n");
 				printf("Enviando mensaje de prueba 10 veces...\n");
 				for (int i = 0; i < 10; i++) // Se envía el mensaje de prueba la cantidad de veces solicitada
 				{
@@ -129,6 +137,7 @@ int main()
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
 
 				printf("Iniciando transmisión...\n");
+				printf("Enviando mensaje de texto para guardar en archivo...\n");
 				iniciarTransmision();		// inicia la transmisión
 				//bool valor_pin_aux = 0;
 				while(transmisionIniciada)
@@ -153,6 +162,7 @@ int main()
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
 
 				printf("Iniciando transmisión...\n");
+				printf("Enviando nombre de archivo al receptor...\n");
 				iniciarTransmision();		// inicia la transmisión
 				//bool valor_pin_aux = 0;
 				while(transmisionIniciada)
@@ -165,9 +175,8 @@ int main()
 			case 5:
 			{
 				/*
-				Mediante un comando el receptor debe imprimir por pantalla el contador de los mensajes
-				recibidos junto con las estadísticas de los mensajes recibidos correctamente y con error (sin
-				contar los de prueba).
+				Mediante un comando crear un archivo con un nombre ingresado por teclado, y registrar el
+				siguiente mensaje recibido en ese archivo (puede ser mensaje normal o de prueba)..
 				*/
 				mensaje.CMD = opcion;
 				obtenerInformacion(mensaje); // Se solicita al usuario el mensaje a enviar
@@ -175,6 +184,7 @@ int main()
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
 
 				printf("Iniciando transmisión...\n");
+				printf("Enviando nombre de nuevo archivo de destino...\n");
 				iniciarTransmision();		// inicia la transmisión
 				//bool valor_pin_aux = 0;
 				while(transmisionIniciada)
@@ -186,12 +196,15 @@ int main()
 			}
 			case 6:
 			{
+				// Mediante un comando el receptor debe imprimir por pantalla el contador de los mensajes
+				// recibidos junto con las estadísticas de los mensajes recibidos correctamente y con error (sin
+				// contar los de prueba).
 				mensaje.CMD = opcion;
-				obtenerInformacion(mensaje); // Se solicita al usuario el mensaje a enviar
 				empaquetar(mensaje);		 // Se empaqueta el mensaje
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
 
 				printf("Iniciando transmisión...\n");
+				printf("Enviando instrucción para imprimir estadísticas globales...\n");
 				iniciarTransmision();		// inicia la transmisión
 				//bool valor_pin_aux = 0;
 				while(transmisionIniciada)
@@ -203,9 +216,13 @@ int main()
 			}
 			case 7:
 			{
+				/*
+				Mediante un comando listar todos los archivos de texto en la carpeta del receptor.
+				*/
 				mensaje.CMD = opcion;
 				empaquetar(mensaje);
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
+				printf("Iniciando transmisión...\n");
 				iniciarTransmision();		// inicia la transmisión
 				while(transmisionIniciada)
 				{
@@ -219,6 +236,7 @@ int main()
 				mensaje.CMD = opcion;
 				empaquetar(mensaje);
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
+				printf("Iniciando transmisión...\n");
 				iniciarTransmision();		// inicia la transmisión
 				while(transmisionIniciada)
 				{
@@ -278,6 +296,7 @@ void cb(void)
 				transmisionIniciada = false;
 				numero_bytes_transmitidos = 0;
 				numero_bits_transmitidos = 0;
+				cantidad_de_mensajes_enviados++;
 			}
 		}
 	}

@@ -81,13 +81,13 @@ int main()
 
 		// Espera a que se reciba un mensaje completo
 		printf("Esperando mensaje...\n");
-		printf("Numero de bytes: %d, Tamaño del mensaje: %d, Fin de transmisión: %d\n", numero_de_bytes, len, transmision_iniciada);
 		while ((numero_de_bytes < len + BYTES_EXTRAS))
 		{
 			delay(100);
 		}
 		printf("Mensaje recibido...\n");
 		printf("Procesando mensaje...\n");
+		// Procesa el mensaje
 		estado = desempaquetar(mensaje);
 		if(estado)
 		{
@@ -97,6 +97,9 @@ int main()
 		else
 		{
 			contador_de_mensajes_recibidos++; // Se incrementa el contador de mensajes recibidos
+			/*
+			Extra: Registrar en otro archivo los mensajes recibidos con error.
+			*/
 			EscribirArchivo("errores", mensaje); // Guarda el mensaje con error en un archivo
 		}
 
@@ -121,7 +124,7 @@ int main()
 				if(contador_de_mensajes_de_prueba == contador_de_mensajes_de_prueba_correctos)
 				{
 					printf("Los diez mensajes de prueba han sido recibidos correctamente\n");
-					printf("Porcentaje de error: %f \%\n", (float)contador_de_mensajes_de_prueba_correctos / contador_de_mensajes_de_prueba * 100);
+					printf("Porcentaje de error: %g \%\n", (float)(contador_de_mensajes_de_prueba_correctos - contador_de_mensajes_de_prueba) / contador_de_mensajes_de_prueba * 100);
 					printf("Se recibieron correctamente %d mensajes de prueba\n", contador_de_mensajes_de_prueba_correctos);
 					printf("Se recibieron incorrectamente %d mensajes de prueba\n", contador_de_mensajes_de_prueba - contador_de_mensajes_de_prueba_correctos);
 				}
@@ -158,6 +161,10 @@ int main()
 		}
 		case 5:
 		{
+			/*
+			Mediante un comando crear un archivo con un nombre ingresado por teclado, y registrar el
+			siguiente mensaje recibido en ese archivo (puede ser mensaje normal o de prueba)..
+			*/
 			imprimirCampos(mensaje);
 			leerMensaje(mensaje, estado);
 			printf("Cambiando archivo destino a: %s.txt ...\n", mensaje.DATA);
@@ -206,7 +213,6 @@ void cb(void)
 		if(numero_de_bytes == 2)
 		{
 			len = mensaje.Frames[1] & 0x3F;
-			printf("Largo del mensaje: %d\n", len);
 		}
 	}
 	else if(signal)

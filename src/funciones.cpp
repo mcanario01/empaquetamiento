@@ -30,8 +30,6 @@ int empaquetar(Protocolo & proto)
 
 	printf("Su mensaje es %s, de largo %d\n\n", proto.DATA, proto.LNG);
 
-	imprimirBytes(proto.Frames, proto.LNG + 4);
-
     return proto.LNG + 4;
 }
 
