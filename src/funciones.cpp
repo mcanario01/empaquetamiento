@@ -28,8 +28,6 @@ int empaquetar(Protocolo & proto)
 
 	printf("Empaquetando mensaje...\n");
 
-	printf("Su mensaje es %s, de largo %d\n\n", proto.DATA, proto.LNG);
-
     return proto.LNG + 4;
 }
 
@@ -88,7 +86,6 @@ void leerMensaje(Protocolo proto, bool estado)
 	printf("El largo del mensaje es: %d\n", proto.LNG);
 	printf("El mensaje es: %s\n", proto.DATA);
     printf("El FCS es: %d\n", proto.FCS[0] << 8 | proto.FCS[1]);
-    
 }
 
 void imprimirBits(BYTE byte)

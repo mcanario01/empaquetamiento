@@ -74,7 +74,7 @@ int main()
 		El emisor debe poder mostrar un contador de mensajes enviados.
 		*/
 		printf("Cantidad de mensajes enviados: %d\n\n", cantidad_de_mensajes_enviados); // imprime la cantidad de mensajes enviados
-		printf("Seleccione una opcion\n[1]Enviar mensaje de texto\n[2]Enviar 10 mensajes de prueba.\n[3]Guardar frase en archivo en receptor.\n[4]Imprimir archivo en receptor\n[5]Cambiar archivo de destino.\n[6]Imprimir resumen de mensajes en receptor\n[7]Cerrar el receptor\n[8]Salir del programa\n");
+		printf("Seleccione una opcion\n[1]Guardar frase en archivo en receptor.\n[2]Enviar 10 mensajes de prueba.\n[3]Imprimir archivo en receptor.\n[4]Cambiar archivo de destino.\n[5]Imprimir resumen de mensajes en receptor.\n[6]Listar todos los .txt en el receptor.\n[7]Cerrar el receptor.\n[8]Salir del programa.\n");
 		printf("Opcion: ");
 		int opcion;
 		scanf("%d", &opcion);
@@ -83,21 +83,23 @@ int main()
 		limpiarBuffer(buffer_de_datos); // Se limpia el buffer de datos
 		switch (opcion)
 			{
-			case 1: // Enviar mensaje de texto, la rutina básica.
+			case 1:
 			{
+				// Mediante un comando se debe enviar un mensaje de texto y ser guardado en un archivo mensajes.txt
 				mensaje.CMD = opcion;
 				obtenerInformacion(mensaje); // Se solicita al usuario el mensaje a enviar
 				empaquetar(mensaje);		 // Se empaqueta el mensaje
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
 
 				printf("Iniciando transmisión...\n");
-				printf("Enviando mensaje de texto...\n");
+				printf("Enviando mensaje de texto para guardar en archivo...\n");
 				iniciarTransmision();		// inicia la transmisión
 				//bool valor_pin_aux = 0;
 				while(transmisionIniciada)
 				{
 					delay(100);
 				}
+				// Enviar mensaje de texto y ser guardado en un archivo mensajes.txt
 				break;
 			}
 			case 2:
@@ -125,30 +127,12 @@ int main()
 					{
 						delay(100);
 					}
+					cantidad_de_mensajes_enviados--;
 				}
 				break;
 			}
+
 			case 3:
-			{
-				// Mediante un comando se debe enviar un mensaje de texto y ser guardado en un archivo mensajes.txt
-				mensaje.CMD = opcion;
-				obtenerInformacion(mensaje); // Se solicita al usuario el mensaje a enviar
-				empaquetar(mensaje);		 // Se empaqueta el mensaje
-				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
-
-				printf("Iniciando transmisión...\n");
-				printf("Enviando mensaje de texto para guardar en archivo...\n");
-				iniciarTransmision();		// inicia la transmisión
-				//bool valor_pin_aux = 0;
-				while(transmisionIniciada)
-				{
-					delay(100);
-				}
-				// Enviar mensaje de texto y ser guardado en un archivo mensajes.txt
-				break;
-			}
-
-			case 4:
 			{
 				/*
 				Mediante un comando se debe enviar un mensaje con el nombre de un archivo de texto de
@@ -172,7 +156,7 @@ int main()
 				// Enviar mensaje de texto y ser guardado en un archivo mensajes.txt
 				break;
 			}
-			case 5:
+			case 4:
 			{
 				/*
 				Mediante un comando crear un archivo con un nombre ingresado por teclado, y registrar el
@@ -194,7 +178,7 @@ int main()
 				// Enviar mensaje de texto y ser guardado en un archivo mensajes.txt
 				break;
 			}
-			case 6:
+			case 5:
 			{
 				// Mediante un comando el receptor debe imprimir por pantalla el contador de los mensajes
 				// recibidos junto con las estadísticas de los mensajes recibidos correctamente y con error (sin
@@ -214,7 +198,7 @@ int main()
 				// Enviar mensaje de texto y ser guardado en un archivo mensajes.txt
 				break;
 			}
-			case 7:
+			case 6:
 			{
 				/*
 				Mediante un comando listar todos los archivos de texto en la carpeta del receptor.
@@ -223,6 +207,22 @@ int main()
 				empaquetar(mensaje);
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
 				printf("Iniciando transmisión...\n");
+				printf("Enviando instrucción para listar todos los .txt del receptor...\n");
+				iniciarTransmision();		// inicia la transmisión
+				while(transmisionIniciada)
+				{
+					delay(100);
+				}
+				break;
+			}
+			case 7:
+			{
+				// Cerrar el programa del receptor
+				mensaje.CMD = opcion;
+				empaquetar(mensaje);
+				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
+				printf("Iniciando transmisión...\n");
+				printf("Enviando comando para cerrar el receptor...\n");
 				iniciarTransmision();		// inicia la transmisión
 				while(transmisionIniciada)
 				{
@@ -232,25 +232,13 @@ int main()
 			}
 			case 8:
 			{
-				// Cerrar el programa del receptor
-				mensaje.CMD = opcion;
-				empaquetar(mensaje);
-				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
-				printf("Iniciando transmisión...\n");
-				iniciarTransmision();		// inicia la transmisión
-				while(transmisionIniciada)
-				{
-					delay(100);
-				}
-				break;
-			}
-
-			case 9:
+				// Salir del programa
+				printf("Saliendo del programa...\n");
 				return 0;
-				break;
+			}
 			default:
 			{
-				printf("La opcion ingresada no es valida, intente nuevamente\n");
+				printf("El comando recibido no es válido, intenta nuevamente.\n");
 				break;
 			}
 		}

@@ -107,9 +107,10 @@ int main()
 		{
 		case 1:
 		{
-			// Imprime el mensaje recibido por consola
-			imprimirCampos(mensaje);
+			// Mediante un comando se debe enviar un mensaje de texto y ser guardado en un archivo mensajes.txt
 			leerMensaje(mensaje, estado);
+			printf("Escribiendo mensaje en archivo %s.txt ...\n", nombre_archivo);
+			EscribirArchivo(nombre_archivo, mensaje);
 			break;
 		}
 		case 2:
@@ -118,7 +119,9 @@ int main()
 			printf("Mensaje de prueba recibido\n");
 			leerMensaje(mensaje, estado);
 			contador_de_mensajes_de_prueba++;
+			contador_de_mensajes_recibidos--;
 			contador_de_mensajes_de_prueba_correctos += estado;
+			contador_de_mensajes_recibidos_correctos -= estado;
 			if(contador_de_mensajes_de_prueba == 10)
 			{
 				if(contador_de_mensajes_de_prueba == contador_de_mensajes_de_prueba_correctos)
@@ -140,37 +143,31 @@ int main()
 		}
 		case 3:
 		{
-			// Mediante un comando se debe enviar un mensaje de texto y ser guardado en un archivo mensajes.txt
-			imprimirCampos(mensaje);
-			leerMensaje(mensaje, estado);
-			printf("Escribiendo mensaje en archivo %s.txt ...\n", nombre_archivo);
-			EscribirArchivo(nombre_archivo, mensaje);
-			break;
-		}
-		case 4:
-		{
 			// Mediante un comando se debe enviar un mensaje con el nombre de un archivo de texto de
 			// prueba en el receptor, con dicho comando, el receptor debe mostrar el contenido del archivo
 			// consola en caso de que este exista, en caso contrario el receptor debe mostrar por consola
 			// que el archivo no existe.
-			imprimirCampos(mensaje);
 			leerMensaje(mensaje, estado);
 			printf("Buscando archivo...\n");
 			EncontrarArchivo(mensaje);
 			break;
 		}
-		case 5:
+		case 4:
 		{
 			/*
 			Mediante un comando crear un archivo con un nombre ingresado por teclado, y registrar el
 			siguiente mensaje recibido en ese archivo (puede ser mensaje normal o de prueba)..
 			*/
-			imprimirCampos(mensaje);
 			leerMensaje(mensaje, estado);
 			printf("Cambiando archivo destino a: %s.txt ...\n", mensaje.DATA);
+			for(size_t i = 0; i < sizeof(nombre_archivo); i++)
+			{
+				nombre_archivo[i] = 0;
+			}
 			memcpy(nombre_archivo, mensaje.DATA, mensaje.LNG);
+			break;
 		}
-		case 6:
+		case 5:
 		{
 			// Mediante un comando el receptor debe imprimir por pantalla el contador de los mensajes
 			// recibidos junto con las estadísticas de los mensajes recibidos correctamente y con error (sin
@@ -181,14 +178,14 @@ int main()
 			printf("Contador de mensajes recibidos incorrectamente: %d\n", contador_de_mensajes_recibidos - contador_de_mensajes_recibidos_correctos);
 			break;
 		}
-		case 7:
+		case 6:
 		{
 			// Lista todos los archivos .txt en la carpeta del receptor.
 			printf("Listando archivos de texto...\n");
 			listarArchivosDeTexto();
 			break;
 		}
-		case 8:
+		case 7:
 		{
 			printf("Apagando...\n");
 			return 0;
