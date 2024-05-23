@@ -4,7 +4,7 @@
 
 #define PWM_PIN 1 // => 18 BCM
 #define PWM_RANGE 1024
-#define PWM_FREQUENCY 1
+#define PWM_FREQUENCY 128
 
 int obtenerRange(int frequency);
 int obtenerDivisor(int frequency);
