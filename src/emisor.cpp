@@ -114,7 +114,7 @@ int main()
 				asociados a los mensajes enviados, y mostrar éstos por la consola del receptor.
 				*/
 				mensaje.CMD = opcion;
-				obtenerInformacion(mensaje);
+				mensaje.DATA="prueba";
 				empaquetar(mensaje);
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
 

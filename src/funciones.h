@@ -62,4 +62,7 @@ void limpiarBuffer(BYTE *buffer);
 // Lista todos los archivos .txt en la carpeta del receptor.
 void listarArchivosDeTexto();
 
+// Compara dos frames y retorna verdadero si son iguales, falso si no lo son.
+bool compararFrames(BYTE *Frame1, BYTE *Frame2, int size);
+
 #endif

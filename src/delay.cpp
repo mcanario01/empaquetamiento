@@ -61,7 +61,7 @@ int main(){
 // Funcion que obtiene el divisor del clock
 // usando la formula de la documentacion de wiringPi
 // que es clock = 19.2 MHz / clock_divisor / range
-int obtenerDivisor(int frequency){
-  return 19200/frequency;
+int obtenerDivisor(int frecuencia){
+  return 19200/frecuencia;
 }
 

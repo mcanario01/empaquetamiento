@@ -241,3 +241,15 @@ void listarArchivosDeTexto()
     system("ls *.txt");
     return;
 }
+
+bool compararFrames(BYTE *Frame1, BYTE *Frame2, int size)
+{
+    for (size_t i = 0; i < size; i++)
+    {
+        if(Frame1[i] != Frame2[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}

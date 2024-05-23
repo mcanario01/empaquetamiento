@@ -176,6 +176,7 @@ int main()
 			printf("Contador de mensajes recibidos: %d\n", contador_de_mensajes_recibidos);
 			printf("Contador de mensajes recibidos correctamente: %d\n", contador_de_mensajes_recibidos_correctos);
 			printf("Contador de mensajes recibidos incorrectamente: %d\n", contador_de_mensajes_recibidos - contador_de_mensajes_recibidos_correctos);
+			printf("Porcentaje de error: %g \%\n", (float)(contador_de_mensajes_recibidos - contador_de_mensajes_recibidos_correctos) / contador_de_mensajes_recibidos * 100);
 			break;
 		}
 		case 6:
