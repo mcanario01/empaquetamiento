@@ -30,7 +30,7 @@ volatile int numero_de_bits = 0;
 // Guarda la cantidad de bytes recibidos
 volatile int numero_de_bytes = 0;
 // Indica si la transmisión está activa
-bool envio_de_informacion = false;
+volatile bool envio_de_informacion = false;
 // Guarda el valor de la paridad
 bool paridad = 0;
 // Guarda la cantidad de unos en un byte
@@ -220,6 +220,7 @@ void cb(void)
 		{
 			len = mensaje.Frames[1] & 0x3F;
 		}
+		
 	}
 	else if(signal)
 	{
