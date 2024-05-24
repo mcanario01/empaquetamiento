@@ -56,6 +56,8 @@ int contador_de_mensajes_recibidos_correctos = 0;
 
 char nombre_archivo[LARGO_DATA] = "mensajes";
 
+
+
 int main()
 {
 	system("clear");
@@ -116,12 +118,18 @@ int main()
 		case 2:
 		{
 			// Recibe 10 mensajes de prueba y calcula el porcentaje de error
+			Protocolo prueba;
+			prueba.CMD = 2;
+			prueba.LNG = 17;
+			memcpy(prueba.DATA, "mensaje de prueba", strlen("mensaje de prueba"));
+			empaquetar(prueba);
+	
 			printf("Mensaje de prueba recibido\n");
 			leerMensaje(mensaje, estado);
+			contador_de_mensajes_de_prueba_correctos += compararFrames(prueba.Frames, mensaje.Frames, 17);
+			contador_de_mensajes_recibidos_correctos -= compararFrames(prueba.Frames, mensaje.Frames, 17);
 			contador_de_mensajes_de_prueba++;
 			contador_de_mensajes_recibidos--;
-			contador_de_mensajes_de_prueba_correctos += estado;
-			contador_de_mensajes_recibidos_correctos -= estado;
 			if(contador_de_mensajes_de_prueba == 10)
 			{
 				if(contador_de_mensajes_de_prueba == contador_de_mensajes_de_prueba_correctos)

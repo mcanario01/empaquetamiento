@@ -89,6 +89,7 @@ int main()
 				mensaje.CMD = opcion;
 				obtenerInformacion(mensaje); // Se solicita al usuario el mensaje a enviar
 				empaquetar(mensaje);		 // Se empaqueta el mensaje
+				imprimirBytes(mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se imprime el mensaje empaquetado (para verificar que se empaquetó correctamente
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
 
 				printf("Iniciando transmisión...\n");
@@ -114,7 +115,8 @@ int main()
 				asociados a los mensajes enviados, y mostrar éstos por la consola del receptor.
 				*/
 				mensaje.CMD = opcion;
-				mensaje.DATA="prueba";
+				mensaje.LNG = 17; // Se establece el largo del mensaje
+				memcpy(mensaje.DATA, "mensaje de prueba", 17); // Se copia el mensaje de prueba al campo DATA del mensaje
 				empaquetar(mensaje);
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
 
