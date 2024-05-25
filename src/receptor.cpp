@@ -41,6 +41,7 @@ bool paridadError = 0;
 volatile BYTE len = 0;
 Protocolo mensaje;
 bool estado;
+volatile bool signal_aux;
 
 // Indica si la transmisión ha finalizado
 volatile bool transmision_iniciada = false;
@@ -86,6 +87,18 @@ int main()
 		while ((numero_de_bytes < len + BYTES_EXTRAS))
 		{
 			delay(100);
+			if(contador_bits_reposo > 10 contador_de_mensajes_de_prueba < 0)
+			{				
+				printf("Ha ocurrido un error en la recepción de mensajes de prueba\n");
+				printf("Porcentaje de error: %g \%\n", (float)(contador_de_mensajes_de_prueba_correctos - contador_de_mensajes_de_prueba) / contador_de_mensajes_de_prueba * 100);
+				printf("Se recibieron correctamente %d mensajes de prueba\n", contador_de_mensajes_de_prueba_correctos);
+				printf("Se recibieron incorrectamente %d mensajes de prueba\n", contador_de_mensajes_de_prueba - contador_de_mensajes_de_prueba_correctos);
+			
+				contador_de_mensajes_de_prueba = 0;
+				contador_de_mensajes_de_prueba_correctos = 0;
+				restablecerDatos();
+			}
+
 		}
 		printf("Mensaje recibido...\n");
 		printf("Procesando mensaje...\n");
@@ -120,17 +133,21 @@ int main()
 			// Recibe 10 mensajes de prueba y calcula el porcentaje de error
 			Protocolo prueba;
 			prueba.CMD = 2;
-			prueba.LNG = 17;
-			memcpy(prueba.DATA, "mensaje de prueba", strlen("mensaje de prueba"));
+			const char mensaje_de_prueba[] = "test"; // Mensaje de prueba
+			prueba.LNG = strlen(mensaje_de_prueba); // Se establece el largo del mensaje
+			memcpy(prueba.DATA, mensaje_de_prueba, prueba.LNG); // Se copia el mensaje
+			
 			empaquetar(prueba);
-	
-			printf("Mensaje de prueba recibido\n");
+			printf("Mensaje de control empaquetado.\n");
+			printf("Mensaje de prueba recibido.\n");
 			leerMensaje(mensaje, estado);
+
 			contador_de_mensajes_de_prueba_correctos += compararFrames(prueba.Frames, mensaje.Frames, 17);
 			contador_de_mensajes_recibidos_correctos -= compararFrames(prueba.Frames, mensaje.Frames, 17);
 			contador_de_mensajes_de_prueba++;
 			contador_de_mensajes_recibidos--;
-			if(contador_de_mensajes_de_prueba == 10)
+				printf("MP: %d, MPC: %d\n", contador_de_mensajes_de_prueba, contador_de_mensajes_de_prueba_correctos);
+			if(contador_de_mensajes_de_prueba >= 10)
 			{
 				if(contador_de_mensajes_de_prueba == contador_de_mensajes_de_prueba_correctos)
 				{
@@ -139,13 +156,9 @@ int main()
 					printf("Se recibieron correctamente %d mensajes de prueba\n", contador_de_mensajes_de_prueba_correctos);
 					printf("Se recibieron incorrectamente %d mensajes de prueba\n", contador_de_mensajes_de_prueba - contador_de_mensajes_de_prueba_correctos);
 				}
-				else
-				{
-					printf("Ha ocurrido un error en la recepción de mensajes de prueba\n");
-					printf("Porcentaje de error: %g \%\n", (float)(contador_de_mensajes_de_prueba_correctos - contador_de_mensajes_de_prueba) / contador_de_mensajes_de_prueba * 100);
-					printf("Se recibieron correctamente %d mensajes de prueba\n", contador_de_mensajes_de_prueba_correctos);
-					printf("Se recibieron incorrectamente %d mensajes de prueba\n", contador_de_mensajes_de_prueba - contador_de_mensajes_de_prueba_correctos);
-				}
+
+				contador_de_mensajes_de_prueba = 0;
+				contador_de_mensajes_de_prueba_correctos = 0;
 			}
 			break;
 		}
@@ -201,9 +214,14 @@ int main()
 		}
 		default:
 		{
-			printf("Ha ocurrido un error, intente nuevamente\n");
+			printf("Ha ocurrido un error, intente nuevamente: Comando desconocido.\n");
+			leerMensaje(mensaje, estado);
+			imprimirCampos(mensaje);
+			break;
 		}
+
 		}
+
 
 	}
 }
@@ -222,15 +240,27 @@ void cb(void)
 		}
 		
 	}
-	else if(signal)
-	{
-		contador_bits_reposo++;
-	}
-	else // Detección del bit de comienzo
+	else if(!signal)
 	{
 		envio_de_informacion = true; // Se inicia la transmisión
 		numero_de_bits = 1;			// Se inicializa el contador de bits
+
 	}
+
+	if(signal == signal_aux)
+	{
+		contador_bits_reposo ++;
+	}
+	else
+	{
+		contador_bits_reposo = 0;
+	}
+
+	if(contador_bits_reposo > 16)
+	{
+		contador_bits_reposo = 15;
+	}
+	signal_aux = signal;
 }
 
 void processBit(bool signal)
@@ -269,5 +299,4 @@ void restablecerDatos()
 	envio_de_informacion = false;
 	paridad = 0;
 	paridadError = 0;
-	contador_bits_reposo = 0;
 }

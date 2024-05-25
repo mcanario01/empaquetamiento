@@ -115,8 +115,9 @@ int main()
 				asociados a los mensajes enviados, y mostrar éstos por la consola del receptor.
 				*/
 				mensaje.CMD = opcion;
-				mensaje.LNG = 17; // Se establece el largo del mensaje
-				memcpy(mensaje.DATA, "mensaje de prueba", 17); // Se copia el mensaje de prueba al campo DATA del mensaje
+				const char mensaje_de_prueba[] = "test"; // Mensaje de prueba
+				mensaje.LNG = strlen(mensaje_de_prueba); // Se establece el largo del mensaje
+				memcpy(mensaje.DATA, mensaje_de_prueba, strlen(mensaje_de_prueba)); // Se copia el mensaje de prueba al campo DATA del mensaje
 				empaquetar(mensaje);
 				memcpy(buffer_de_datos, mensaje.Frames, mensaje.LNG + BYTES_EXTRAS); // Se copia el mensaje empaquetado al buffer de datos
 
